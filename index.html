@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <title>Toni Developing</title>
+    <style>
+        .title {
+            text-align: center;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        .main {
+            display: flex;
+            justify-content: center;
+        }
+
+        /*.primobottone{
+                background-color: rgb(157, 150, 248);
+                border: none;
+                border-radius: 5px;
+                color: white;
+                padding: 10px 20px;
+                margin-top: 20px;
+                font-size: 16px;
+                text-emphasis-color: white;
+            }
+
+            .primobottone:hover{
+                animation-name: scalex;
+                animation-duration: 0.5s;
+                animation-timing-function: ease;
+                animation-delay: 0s;
+                animation-iteration-count: 1;
+                animation-direction: normal;
+                animation-fill-mode: forwards;
+            }
+
+            @keyframes scalex{
+                to{transform: scale(1.5);}
+            }*/
+
+        .primobottone {
+            background-color: rgb(157, 150, 248);
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 20px;
+            font-size: 16px;
+            text-emphasis-color: white;
+            transition: transform 0.5s ease;
+        }
+
+        .primobottone:hover {
+            transform: scale(1.25);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h1>Toni Developing</h1>
+        <p>Programmo per sfizio, se vuoi guarda quello che ho fatto</p>
+    </div>
+
+    <div class="main">
+        <button class="primobottone" onclick="redirect()">10 e Lotto</button>
+    </div>
+
+    <script>
+        function redirect(){
+            window.location.href = "/10elotto/index.html";
+        }
+    </script>
+</body>
+
+</html>
