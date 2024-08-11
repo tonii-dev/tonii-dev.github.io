@@ -158,15 +158,9 @@
             listaNumeri.innerHTML = '';
             numeriGiocati.forEach(numero => {
                 if (numero > 90) return;
-                const alreadyExists = false;
-
-                listaNumeri.children.forEach(element => {
-                    if (element.textContent == numero) alreadyExists = true;
-                })
                 const li = document.createElement('li');
                 li.textContent = numero;
-
-                /*if(!alreadyExists)*/ listaNumeri.appendChild(li);
+                listaNumeri.appendChild(li);
             });
         }
 
