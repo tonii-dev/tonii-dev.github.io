@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainWindow</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .custom-separator {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+            .custom-separator hr {
+                flex-grow: 1;
+                border: none;
+                border-top: 1px solid #ccc;
+            }
+
+            .custom-separator span {
+                margin: 0 10px;
+                font-weight: 600;
+                font-size: 11px;
+                color: #333;
+            }
+
+        .timer {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+            .button:hover {
+                animation-name: scaleandbackgroundcolor;
+                animation-duration: 0.5s;
+                animation-timing-function: ease;
+                animation-delay: 0s;
+                animation-iteration-count: 1;
+                animation-direction: normal;
+                animation-fill-mode: forwards;
+            }
+
+            .button:active {
+                transform: scale(1.125)
+            }
+
+        @keyframes scaleandbackgroundcolor {
+            to {
+                transform: scale(1.125)
+            }
+
+            to {
+                background-color: #0056b3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">10eLotto</div>
+        <div class="subtitle">Numeri vincenti in diretta ogni 5 minuti</div>
+
+        <div class="custom-separator">
+            <hr>
+            <span>ESTRAZIONI</span>
+            <hr>
+        </div>
+
+        <div class="subtitle">Prossima estrazione:</div>
+        <div id="timer" class="timer">5:00</div>
+
+        <button class="button" onclick="window.location.href='checkbet.html'">Controlla giocata</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function startTimer() {
+                setInterval(updateTimer, 1000);
+            }
+
+            function updateTimer() {
+                const timerElement = document.getElementById("timer");
+                const timeLeft = getTimeLeft();
+                timerElement.textContent = `${timeLeft.minutes}:${timeLeft.seconds}`;
+            }
+
+            function getTimeLeft() {
+                const now = new Date();
+                const minutes = now.getMinutes();
+                const nextMinute = Math.ceil((minutes + 1) / 5) * 5;
+                let nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), nextMinute, 0);
+
+                if (nextMinute === 60) {
+                    nextTarget.setHours(nextTarget.getHours() + 1);
+                    nextTarget.setMinutes(0);
+                }
+
+                const timeDifference = nextTarget - now;
+                const minutesLeft = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsLeft = Math.floor((timeDifference % (1000 * 60)) / 1000);
+
+                return {
+                    minutes: minutesLeft.toString().padStart(2, '0'),
+                    seconds: secondsLeft.toString().padStart(2, '0')
+                };
+            }
+
+            startTimer();
+        });
+    </script>
+</body>
+</html>
