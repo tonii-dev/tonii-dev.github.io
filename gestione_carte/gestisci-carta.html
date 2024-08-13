@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestisci Carta</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Gestisci la tua Carta di Credito</h1>
+    <h2>Informazioni della Carta</h2>
+    <form action="aggiorna-carta.php" method="post">
+        <label for="proprietario">Proprietario:</label>
+        <p id="proprietario"></p>
+        <br>
+        <label for="saldo">Saldo:</label>
+        <p id="saldo"></p>
+        <br>
+        <label for="bloccata">Carta Bloccata:</label>
+        <input type="checkbox" id="bloccata" name="bloccata">
+        <br>
+        <input type="hidden" id="codice" name="codice">
+        <input type="hidden" id="password" name="password">
+        <button type="submit">Aggiorna</button>
+    </form>
+
+    <script>
+        // Leggere i parametri GET
+        const urlParams = new URLSearchParams(window.location.search);
+        const codice = urlParams.get('codice');
+        const password = urlParams.get('password');
+
+        // Impostare i valori degli input nascosti
+        document.getElementById('codice').value = codice;
+        document.getElementById('password').value = password;
+
+        // Esegui una richiesta AJAX per ottenere i dati della carta
+        fetch(`get-carta.php?codice=${codice}&password=${password}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.proprietario) {
+                    document.getElementById('proprietario').textContent = data.proprietario;
+                    document.getElementById('saldo').textContent = data.saldo;
+                    document.getElementById('bloccata').checked = data.bloccata == 1 ? true : false;
+                } else {
+                    alert("Carta non trovata o credenziali errate.");
+                }
+            })
+            .catch(error => console.error('Errore:', error));
+    </script>
+</body>
+</html>
