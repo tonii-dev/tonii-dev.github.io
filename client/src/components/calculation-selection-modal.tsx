@@ -45,6 +45,26 @@ export function CalculationSelectionModal({
       available: false,
       missingData: []
     },
+    {
+      id: 'uniform_motion_velocity',
+      title: 'Velocità dal Moto Uniforme (Formula Inversa)',
+      description: 'Calcola la velocità da posizione e tempo',
+      formula: 'v = (s - s₀) / t',
+      requiredData: ['position', 'time'],
+      category: 'kinematics',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'uniform_motion_time',
+      title: 'Tempo dal Moto Uniforme (Formula Inversa)',
+      description: 'Calcola il tempo da posizione e velocità',
+      formula: 't = (s - s₀) / v',
+      requiredData: ['position', 'velocity'],
+      category: 'kinematics',
+      available: false,
+      missingData: []
+    },
     // Cinematica - Moto Uniformemente Accelerato
     {
       id: 'accelerated_motion_velocity',
@@ -52,6 +72,26 @@ export function CalculationSelectionModal({
       description: 'Calcola la velocità finale con accelerazione costante',
       formula: 'vf = v₀ + a·t',
       requiredData: ['velocity', 'acceleration', 'time'],
+      category: 'kinematics',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'accelerated_motion_acceleration',
+      title: 'Accelerazione dal Moto Accelerato (Formula Inversa)',
+      description: 'Calcola l\'accelerazione da velocità e tempo',
+      formula: 'a = (vf - v₀) / t',
+      requiredData: ['velocity', 'time'],
+      category: 'kinematics',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'accelerated_motion_time_velocity',
+      title: 'Tempo dal Moto Accelerato (Formula Inversa)',
+      description: 'Calcola il tempo da velocità e accelerazione',
+      formula: 't = (vf - v₀) / a',
+      requiredData: ['velocity', 'acceleration'],
       category: 'kinematics',
       available: false,
       missingData: []
@@ -88,6 +128,26 @@ export function CalculationSelectionModal({
       missingData: []
     },
     {
+      id: 'newton_force_calculation',
+      title: 'Forza dal Secondo Principio (Formula Inversa)',
+      description: 'Calcola la forza da massa e accelerazione',
+      formula: 'F = m·a',
+      requiredData: ['mass', 'acceleration'],
+      category: 'dynamics',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'newton_mass_calculation',
+      title: 'Massa dal Secondo Principio (Formula Inversa)',
+      description: 'Calcola la massa da forza e accelerazione',
+      formula: 'm = F/a',
+      requiredData: ['force', 'acceleration'],
+      category: 'dynamics',
+      available: false,
+      missingData: []
+    },
+    {
       id: 'force_decomposition',
       title: 'Decomposizione Vettoriale delle Forze',
       description: 'Scompone una forza nelle sue componenti cartesiane',
@@ -109,11 +169,51 @@ export function CalculationSelectionModal({
       missingData: []
     },
     {
+      id: 'velocity_from_kinetic',
+      title: 'Velocità dall\'Energia Cinetica (Formula Inversa)',
+      description: 'Calcola la velocità dall\'energia cinetica e massa',
+      formula: 'v = √(2·Ek/m)',
+      requiredData: ['mass'],
+      category: 'energy',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'mass_from_kinetic',
+      title: 'Massa dall\'Energia Cinetica (Formula Inversa)',
+      description: 'Calcola la massa dall\'energia cinetica e velocità',
+      formula: 'm = 2·Ek/v²',
+      requiredData: ['velocity'],
+      category: 'energy',
+      available: false,
+      missingData: []
+    },
+    {
       id: 'potential_energy',
       title: 'Energia Potenziale Gravitazionale',
       description: 'Calcola l\'energia potenziale gravitazionale',
       formula: 'Ep = m·g·h',
       requiredData: ['mass', 'position'],
+      category: 'energy',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'height_from_potential',
+      title: 'Altezza dall\'Energia Potenziale (Formula Inversa)',
+      description: 'Calcola l\'altezza dall\'energia potenziale e massa',
+      formula: 'h = Ep/(m·g)',
+      requiredData: ['mass'],
+      category: 'energy',
+      available: false,
+      missingData: []
+    },
+    {
+      id: 'mass_from_potential',
+      title: 'Massa dall\'Energia Potenziale (Formula Inversa)',
+      description: 'Calcola la massa dall\'energia potenziale e altezza',
+      formula: 'm = Ep/(g·h)',
+      requiredData: ['position'],
       category: 'energy',
       available: false,
       missingData: []

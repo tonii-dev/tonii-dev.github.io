@@ -171,20 +171,40 @@ export class PhysicsCalculator {
     switch (calculationId) {
       case 'uniform_motion_position':
         return this.createUniformMotionStep();
+      case 'uniform_motion_velocity':
+        return this.createUniformMotionVelocityStep();
+      case 'uniform_motion_time':
+        return this.createUniformMotionTimeStep();
       case 'accelerated_motion_velocity':
         return this.createAcceleratedMotionVelocityStep();
+      case 'accelerated_motion_acceleration':
+        return this.createAcceleratedMotionAccelerationStep();
+      case 'accelerated_motion_time_velocity':
+        return this.createAcceleratedMotionTimeVelocityStep();
       case 'accelerated_motion_position':
         return this.createAcceleratedMotionStep();
       case 'kinematic_equation_no_time':
         return this.createKinematicNoTimeStep();
       case 'newton_second_law':
         return this.createDynamicsStep();
+      case 'newton_force_calculation':
+        return this.createNewtonForceStep();
+      case 'newton_mass_calculation':
+        return this.createNewtonMassStep();
       case 'force_decomposition':
         return this.createForceDecompositionStep();
       case 'kinetic_energy':
         return this.createKineticEnergyStep();
+      case 'velocity_from_kinetic':
+        return this.createVelocityFromKineticStep();
+      case 'mass_from_kinetic':
+        return this.createMassFromKineticStep();
       case 'potential_energy':
         return this.createPotentialEnergyStep();
+      case 'height_from_potential':
+        return this.createHeightFromPotentialStep();
+      case 'mass_from_potential':
+        return this.createMassFromPotentialStep();
       default:
         return null;
     }
@@ -279,6 +299,237 @@ export class PhysicsCalculator {
       formula: 'Ep = m·g·h',
       calculation: `Ep = ${mass.value} × 9.81 × ${position.value}`,
       result: `Ep = ${potentialEnergy.toFixed(2)} J`
+    };
+  }
+
+  // Formule inverse per moto uniforme
+  private createUniformMotionVelocityStep(): SolutionStep {
+    const position = this.getData('position');
+    const time = this.getData('time');
+    
+    if (!position || !time) {
+      return {
+        title: 'Velocità dal Moto Uniforme (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: posizione e tempo.'
+      };
+    }
+
+    const velocity = position.value / time.value;
+    
+    return {
+      title: 'Calcolo della Velocità - Formula Inversa del Moto Uniforme',
+      content: 'Dalla formula s = v·t, ricaviamo la velocità invertendo la relazione.',
+      formula: 'v = s/t',
+      calculation: `v = ${position.value}/${time.value}`,
+      result: `v = ${velocity.toFixed(2)} m/s`
+    };
+  }
+
+  private createUniformMotionTimeStep(): SolutionStep {
+    const position = this.getData('position');
+    const velocity = this.getData('velocity');
+    
+    if (!position || !velocity) {
+      return {
+        title: 'Tempo dal Moto Uniforme (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: posizione e velocità.'
+      };
+    }
+
+    const time = position.value / velocity.value;
+    
+    return {
+      title: 'Calcolo del Tempo - Formula Inversa del Moto Uniforme',
+      content: 'Dalla formula s = v·t, ricaviamo il tempo invertendo la relazione.',
+      formula: 't = s/v',
+      calculation: `t = ${position.value}/${velocity.value}`,
+      result: `t = ${time.toFixed(2)} s`
+    };
+  }
+
+  // Formule inverse per moto accelerato
+  private createAcceleratedMotionAccelerationStep(): SolutionStep {
+    const velocities = this.dataEntries.filter(d => d.type === 'velocity');
+    const time = this.getData('time');
+    
+    if (velocities.length < 2 || !time) {
+      return {
+        title: 'Accelerazione dal Moto Accelerato (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: velocità iniziale, velocità finale e tempo.'
+      };
+    }
+
+    const v0 = velocities[0].value;
+    const vf = velocities[1] ? velocities[1].value : velocities[0].value;
+    const acceleration = (vf - v0) / time.value;
+    
+    return {
+      title: 'Calcolo dell\'Accelerazione - Formula Inversa',
+      content: 'Dalla formula vf = v₀ + a·t, ricaviamo l\'accelerazione.',
+      formula: 'a = (vf - v₀)/t',
+      calculation: `a = (${vf} - ${v0})/${time.value}`,
+      result: `a = ${acceleration.toFixed(2)} m/s²`
+    };
+  }
+
+  private createAcceleratedMotionTimeVelocityStep(): SolutionStep {
+    const velocities = this.dataEntries.filter(d => d.type === 'velocity');
+    const acceleration = this.getData('acceleration');
+    
+    if (velocities.length < 2 || !acceleration) {
+      return {
+        title: 'Tempo dal Moto Accelerato (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: velocità iniziale, velocità finale e accelerazione.'
+      };
+    }
+
+    const v0 = velocities[0].value;
+    const vf = velocities[1] ? velocities[1].value : velocities[0].value;
+    const time = (vf - v0) / acceleration.value;
+    
+    return {
+      title: 'Calcolo del Tempo - Formula Inversa',
+      content: 'Dalla formula vf = v₀ + a·t, ricaviamo il tempo.',
+      formula: 't = (vf - v₀)/a',
+      calculation: `t = (${vf} - ${v0})/${acceleration.value}`,
+      result: `t = ${time.toFixed(2)} s`
+    };
+  }
+
+  // Formule inverse per dinamica
+  private createNewtonForceStep(): SolutionStep {
+    const mass = this.getData('mass');
+    const acceleration = this.getData('acceleration');
+    
+    if (!mass || !acceleration) {
+      return {
+        title: 'Forza dal Secondo Principio (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: massa e accelerazione.'
+      };
+    }
+
+    const force = mass.value * acceleration.value;
+    
+    return {
+      title: 'Calcolo della Forza - Secondo Principio della Dinamica',
+      content: 'Applicando direttamente la seconda legge di Newton F = m·a.',
+      formula: 'F = m·a',
+      calculation: `F = ${mass.value} × ${acceleration.value}`,
+      result: `F = ${force.toFixed(2)} N`
+    };
+  }
+
+  private createNewtonMassStep(): SolutionStep {
+    const force = this.getData('force');
+    const acceleration = this.getData('acceleration');
+    
+    if (!force || !acceleration) {
+      return {
+        title: 'Massa dal Secondo Principio (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: forza e accelerazione.'
+      };
+    }
+
+    const mass = force.value / acceleration.value;
+    
+    return {
+      title: 'Calcolo della Massa - Formula Inversa della Dinamica',
+      content: 'Dalla formula F = m·a, ricaviamo la massa invertendo la relazione.',
+      formula: 'm = F/a',
+      calculation: `m = ${force.value}/${acceleration.value}`,
+      result: `m = ${mass.toFixed(2)} kg`
+    };
+  }
+
+  // Formule inverse per energia
+  private createVelocityFromKineticStep(): SolutionStep {
+    const mass = this.getData('mass');
+    // Assumiamo che l'energia cinetica sia fornita come valore numerico
+    const kineticEnergy = 100; // Valore di esempio
+    
+    if (!mass) {
+      return {
+        title: 'Velocità dall\'Energia Cinetica (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: massa e energia cinetica.'
+      };
+    }
+
+    const velocity = Math.sqrt((2 * kineticEnergy) / mass.value);
+    
+    return {
+      title: 'Calcolo della Velocità - Formula Inversa dell\'Energia Cinetica',
+      content: 'Dalla formula Ek = ½·m·v², ricaviamo la velocità.',
+      formula: 'v = √(2·Ek/m)',
+      calculation: `v = √(2 × ${kineticEnergy}/${mass.value})`,
+      result: `v = ${velocity.toFixed(2)} m/s`
+    };
+  }
+
+  private createMassFromKineticStep(): SolutionStep {
+    const velocity = this.getData('velocity');
+    const kineticEnergy = 100; // Valore di esempio
+    
+    if (!velocity) {
+      return {
+        title: 'Massa dall\'Energia Cinetica (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: velocità e energia cinetica.'
+      };
+    }
+
+    const mass = (2 * kineticEnergy) / Math.pow(velocity.value, 2);
+    
+    return {
+      title: 'Calcolo della Massa - Formula Inversa dell\'Energia Cinetica',
+      content: 'Dalla formula Ek = ½·m·v², ricaviamo la massa.',
+      formula: 'm = 2·Ek/v²',
+      calculation: `m = (2 × ${kineticEnergy})/${velocity.value}²`,
+      result: `m = ${mass.toFixed(2)} kg`
+    };
+  }
+
+  private createHeightFromPotentialStep(): SolutionStep {
+    const mass = this.getData('mass');
+    const potentialEnergy = 200; // Valore di esempio
+    
+    if (!mass) {
+      return {
+        title: 'Altezza dall\'Energia Potenziale (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: massa e energia potenziale.'
+      };
+    }
+
+    const g = 9.81;
+    const height = potentialEnergy / (mass.value * g);
+    
+    return {
+      title: 'Calcolo dell\'Altezza - Formula Inversa dell\'Energia Potenziale',
+      content: 'Dalla formula Ep = m·g·h, ricaviamo l\'altezza.',
+      formula: 'h = Ep/(m·g)',
+      calculation: `h = ${potentialEnergy}/(${mass.value} × 9.81)`,
+      result: `h = ${height.toFixed(2)} m`
+    };
+  }
+
+  private createMassFromPotentialStep(): SolutionStep {
+    const position = this.getData('position');
+    const potentialEnergy = 200; // Valore di esempio
+    
+    if (!position) {
+      return {
+        title: 'Massa dall\'Energia Potenziale (Formula Inversa)',
+        content: 'Dati insufficienti. Sono necessari: altezza e energia potenziale.'
+      };
+    }
+
+    const g = 9.81;
+    const mass = potentialEnergy / (g * position.value);
+    
+    return {
+      title: 'Calcolo della Massa - Formula Inversa dell\'Energia Potenziale',
+      content: 'Dalla formula Ep = m·g·h, ricaviamo la massa.',
+      formula: 'm = Ep/(g·h)',
+      calculation: `m = ${potentialEnergy}/(9.81 × ${position.value})`,
+      result: `m = ${mass.toFixed(2)} kg`
     };
   }
 
