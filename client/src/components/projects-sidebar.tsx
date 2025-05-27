@@ -30,7 +30,7 @@ export function ProjectsSidebar({
           <Button
             onClick={onNewProject}
             size="sm"
-            className="w-8 h-8 p-0 bg-red-500 hover:bg-red-600 text-white"
+            className="w-8 h-8 p-0 bg-purple-500 hover:bg-purple-600 text-white"
           >
             <Plus className="w-4 h-4" />
           </Button>
@@ -64,7 +64,7 @@ export function ProjectsSidebar({
                 <Card
                   className={`cursor-pointer transition-all hover:shadow-lg ${
                     currentProject?.id === project.id
-                      ? 'border-red-500 bg-slate-800'
+                      ? 'border-purple-500 bg-slate-800'
                       : 'border-slate-600 bg-slate-800/50 hover:bg-slate-800/80'
                   }`}
                   onClick={() => onSelectProject(project)}

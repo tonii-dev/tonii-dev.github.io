@@ -17,7 +17,7 @@ export function TemplateSelection({ onSelectTemplate }: TemplateSelectionProps) 
         transition={{ duration: 0.6 }}
       >
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-red-400 to-red-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
             Simulatore Fisica Interattivo
           </h1>
           <p className="text-slate-300 text-lg">
@@ -37,7 +37,7 @@ export function TemplateSelection({ onSelectTemplate }: TemplateSelectionProps) 
           >
             <Card className="bg-slate-900/50 backdrop-blur-sm border-slate-700 mb-8">
               <CardContent className="p-8">
-                <h2 className="text-2xl font-semibold mb-4 text-red-400">
+                <h2 className="text-2xl font-semibold mb-4 text-purple-400">
                   Benvenuto nel Simulatore
                 </h2>
                 <p className="text-slate-300 mb-6 leading-relaxed">
@@ -93,13 +93,13 @@ export function TemplateSelection({ onSelectTemplate }: TemplateSelectionProps) 
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 <Card 
-                  className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-red-500 transition-all duration-300 cursor-pointer group"
+                  className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-purple-500 transition-all duration-300 cursor-pointer group"
                   onClick={() => onSelectTemplate('cartesian')}
                 >
                   <CardHeader>
                     <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-500/30 transition-colors">
-                        <PenTool className="w-6 h-6 text-red-500" />
+                      <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-500/30 transition-colors">
+                        <PenTool className="w-6 h-6 text-purple-500" />
                       </div>
                       <CardTitle className="text-lg text-white">Piano Cartesiano Libero</CardTitle>
                     </div>
@@ -134,13 +134,13 @@ export function TemplateSelection({ onSelectTemplate }: TemplateSelectionProps) 
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
               >
                 <Card 
-                  className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-red-500 transition-all duration-300 cursor-pointer group"
+                  className="bg-slate-900/70 backdrop-blur-sm border-slate-700 hover:border-purple-500 transition-all duration-300 cursor-pointer group"
                   onClick={() => onSelectTemplate('inclined')}
                 >
                   <CardHeader>
                     <div className="flex items-center mb-4">
-                      <div className="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-red-500/30 transition-colors">
-                        <Mountain className="w-6 h-6 text-red-500" />
+                      <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-500/30 transition-colors">
+                        <Mountain className="w-6 h-6 text-purple-500" />
                       </div>
                       <CardTitle className="text-lg text-white">Piano Inclinato</CardTitle>
                     </div>
