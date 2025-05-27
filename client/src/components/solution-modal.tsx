@@ -14,7 +14,7 @@ export function SolutionModal({ isOpen, onClose, steps }: SolutionModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-slate-900 border-slate-700 text-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-red-400">
+          <DialogTitle className="text-xl font-semibold text-purple-400">
             Risoluzione del Problema
           </DialogTitle>
         </DialogHeader>
@@ -29,7 +29,7 @@ export function SolutionModal({ isOpen, onClose, steps }: SolutionModalProps) {
             >
               <Card className="bg-slate-800/50 border-slate-600">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold text-lg mb-3 text-red-400">
+                  <h4 className="font-semibold text-lg mb-3 text-purple-400">
                     Passo {index + 1}: {step.title}
                   </h4>
                   <p className="text-slate-300 mb-3 leading-relaxed">

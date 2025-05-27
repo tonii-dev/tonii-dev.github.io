@@ -51,6 +51,6 @@ export const DATA_TYPE_INFO: Record<string, DataTypeInfo> = {
 };
 
 export const FORCE_COLORS = [
-  '#e94560', '#00d4aa', '#f39c12', '#9b59b6', 
-  '#3498db', '#e67e22', '#1abc9c', '#e74c3c'
+  '#a855f7', '#00d4aa', '#f39c12', '#8b5cf6', 
+  '#3498db', '#e67e22', '#1abc9c', '#c084fc'
 ];

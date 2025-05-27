@@ -69,7 +69,7 @@ export function GraphCanvas({ template, dataEntries, forces }: GraphCanvasProps)
           y={centerY - 15} 
           width="30" 
           height="30" 
-          fill="#e94560" 
+          fill="#a855f7" 
           stroke="#ffffff" 
           strokeWidth="2" 
           rx="3"
@@ -116,7 +116,7 @@ export function GraphCanvas({ template, dataEntries, forces }: GraphCanvasProps)
           y="335" 
           width="30" 
           height="30" 
-          fill="#e94560" 
+          fill="#a855f7" 
           stroke="#ffffff" 
           strokeWidth="2" 
           rx="3"

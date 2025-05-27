@@ -134,8 +134,14 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
       return;
     }
 
+    setShowCalculationModal(true);
+  };
+
+  const handleSelectCalculation = (calculationId: string) => {
+    if (!currentProject || !currentProject.dataEntries) return;
+
     const calculator = new PhysicsCalculator(currentProject.dataEntries);
-    const steps = calculator.generateSolutionSteps();
+    const steps = calculator.generateSolutionSteps(calculationId);
     setSolutionSteps(steps);
     setShowSolutionModal(true);
   };
@@ -180,6 +186,14 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
           onCalculateSolution={handleCalculateSolution}
         />
       </div>
+
+      {/* Calculation Selection Modal */}
+      <CalculationSelectionModal
+        isOpen={showCalculationModal}
+        onClose={() => setShowCalculationModal(false)}
+        dataEntries={currentProject?.dataEntries || []}
+        onSelectCalculation={handleSelectCalculation}
+      />
 
       {/* Solution Modal */}
       <SolutionModal
