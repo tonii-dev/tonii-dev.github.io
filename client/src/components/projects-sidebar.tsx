@@ -89,7 +89,7 @@ export function ProjectsSidebar({
                         }}
                         size="sm"
                         variant="ghost"
-                        className="w-6 h-6 p-0 hover:bg-red-500/20 text-red-400 hover:text-red-300"
+                        className="w-6 h-6 p-0 hover:bg-purple-500/20 text-purple-400 hover:text-purple-300"
                       >
                         <Trash2 className="w-3 h-3" />
                       </Button>

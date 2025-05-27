@@ -77,7 +77,7 @@ export function DataInputPanel({
       >
         <Card className="bg-slate-800/50 border-slate-600">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg text-red-400">{info.name} ({info.symbol})</CardTitle>
+            <CardTitle className="text-lg text-purple-400">{info.name} ({info.symbol})</CardTitle>
             <p className="text-sm text-slate-300">{info.description}</p>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -165,7 +165,7 @@ export function DataInputPanel({
         <h3 className="font-semibold mb-2 text-white">Dati del Problema</h3>
         <Button
           onClick={onCalculateSolution}
-          className="w-full bg-red-500 hover:bg-red-600 text-white"
+          className="w-full bg-purple-500 hover:bg-purple-600 text-white"
           disabled={dataEntries.length === 0}
         >
           <Calculator className="w-4 h-4 mr-2" />

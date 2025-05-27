@@ -7,13 +7,22 @@ export class PhysicsCalculator {
     this.dataEntries = dataEntries;
   }
 
-  generateSolutionSteps(): SolutionStep[] {
+  generateSolutionSteps(calculationId?: string): SolutionStep[] {
     const steps: SolutionStep[] = [];
     
     // Analysis step
     steps.push(this.createAnalysisStep());
     
-    // Check for different types of motion problems
+    // If a specific calculation is requested
+    if (calculationId) {
+      const calculationStep = this.createSpecificCalculationStep(calculationId);
+      if (calculationStep) {
+        steps.push(calculationStep);
+      }
+      return steps;
+    }
+    
+    // Default behavior - check for different types of motion problems
     if (this.hasData(['velocity', 'time']) && !this.hasData(['position'])) {
       steps.push(this.createUniformMotionStep());
     }
@@ -156,6 +165,121 @@ export class PhysicsCalculator {
 
   private hasForceWithAngle(): boolean {
     return this.dataEntries.some(d => d.type === 'force' && d.direction !== undefined);
+  }
+
+  private createSpecificCalculationStep(calculationId: string): SolutionStep | null {
+    switch (calculationId) {
+      case 'uniform_motion_position':
+        return this.createUniformMotionStep();
+      case 'accelerated_motion_velocity':
+        return this.createAcceleratedMotionVelocityStep();
+      case 'accelerated_motion_position':
+        return this.createAcceleratedMotionStep();
+      case 'kinematic_equation_no_time':
+        return this.createKinematicNoTimeStep();
+      case 'newton_second_law':
+        return this.createDynamicsStep();
+      case 'force_decomposition':
+        return this.createForceDecompositionStep();
+      case 'kinetic_energy':
+        return this.createKineticEnergyStep();
+      case 'potential_energy':
+        return this.createPotentialEnergyStep();
+      default:
+        return null;
+    }
+  }
+
+  private createAcceleratedMotionVelocityStep(): SolutionStep {
+    const acceleration = this.getData('acceleration');
+    const time = this.getData('time');
+    const initialVelocity = this.getData('velocity');
+    
+    if (!acceleration || !time || !initialVelocity) {
+      return {
+        title: 'Velocità Finale - Moto Accelerato',
+        content: 'Dati insufficienti per calcolare la velocità finale. Sono necessari: velocità iniziale, accelerazione e tempo.'
+      };
+    }
+
+    const finalVelocity = initialVelocity.value + acceleration.value * time.value;
+    
+    return {
+      title: 'Calcolo della Velocità Finale - Moto Uniformemente Accelerato',
+      content: 'Applicando la prima equazione della cinematica per trovare la velocità finale.',
+      formula: 'vf = v₀ + a·t',
+      calculation: `vf = ${initialVelocity.value} + ${acceleration.value} × ${time.value}`,
+      result: `vf = ${finalVelocity.toFixed(2)} m/s`
+    };
+  }
+
+  private createKinematicNoTimeStep(): SolutionStep {
+    const velocity = this.getData('velocity');
+    const acceleration = this.getData('acceleration');
+    const position = this.getData('position');
+    
+    if (!velocity || !acceleration || !position) {
+      return {
+        title: 'Equazione Cinematica senza Tempo',
+        content: 'Dati insufficienti. Sono necessari: velocità iniziale, accelerazione e spostamento.'
+      };
+    }
+
+    const finalVelocitySquared = Math.pow(velocity.value, 2) + 2 * acceleration.value * position.value;
+    const finalVelocity = Math.sqrt(Math.abs(finalVelocitySquared));
+    
+    return {
+      title: 'Calcolo usando l\'Equazione Cinematica senza Tempo',
+      content: 'Utilizziamo la relazione che collega velocità, accelerazione e spostamento senza coinvolgere il tempo.',
+      formula: 'vf² = v₀² + 2·a·s',
+      calculation: `vf² = ${velocity.value}² + 2 × ${acceleration.value} × ${position.value} = ${finalVelocitySquared.toFixed(2)}`,
+      result: `vf = ${finalVelocity.toFixed(2)} m/s`
+    };
+  }
+
+  private createKineticEnergyStep(): SolutionStep {
+    const mass = this.getData('mass');
+    const velocity = this.getData('velocity');
+    
+    if (!mass || !velocity) {
+      return {
+        title: 'Energia Cinetica',
+        content: 'Dati insufficienti per calcolare l\'energia cinetica. Sono necessari: massa e velocità.'
+      };
+    }
+
+    const kineticEnergy = 0.5 * mass.value * Math.pow(velocity.value, 2);
+    
+    return {
+      title: 'Calcolo dell\'Energia Cinetica',
+      content: 'L\'energia cinetica è l\'energia posseduta da un corpo a causa del suo movimento.',
+      formula: 'Ek = ½·m·v²',
+      calculation: `Ek = ½ × ${mass.value} × ${velocity.value}² = ½ × ${mass.value} × ${Math.pow(velocity.value, 2)}`,
+      result: `Ek = ${kineticEnergy.toFixed(2)} J`
+    };
+  }
+
+  private createPotentialEnergyStep(): SolutionStep {
+    const mass = this.getData('mass');
+    const position = this.getData('position');
+    
+    if (!mass || !position) {
+      return {
+        title: 'Energia Potenziale Gravitazionale',
+        content: 'Dati insufficienti per calcolare l\'energia potenziale. Sono necessari: massa e altezza.'
+      };
+    }
+
+    const g = 9.81; // accelerazione di gravità
+    const potentialEnergy = mass.value * g * position.value;
+    
+    return {
+      title: 'Calcolo dell\'Energia Potenziale Gravitazionale',
+      content: 'L\'energia potenziale gravitazionale dipende dalla posizione del corpo nel campo gravitazionale.',
+      formula: 'Ep = m·g·h',
+      calculation: `Ep = ${mass.value} × 9.81 × ${position.value}`,
+      result: `Ep = ${potentialEnergy.toFixed(2)} J`
+    };
   }
 
   private getUnit(type: string): string {

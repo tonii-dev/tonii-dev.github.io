@@ -4,6 +4,7 @@ import { ProjectsSidebar } from "@/components/projects-sidebar";
 import { GraphCanvas } from "@/components/graph-canvas";
 import { DataInputPanel } from "@/components/data-input-panel";
 import { SolutionModal } from "@/components/solution-modal";
+import { CalculationSelectionModal } from "@/components/calculation-selection-modal";
 import { PhysicsCalculator } from "@/lib/physics-calculator";
 import { apiRequest } from "@/lib/queryClient";
 import type { PhysicsProject, DataEntry, Force, SolutionStep } from "@/lib/physics-types";
@@ -17,6 +18,7 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
   const [currentProject, setCurrentProject] = useState<PhysicsProject | null>(null);
   const [solutionSteps, setSolutionSteps] = useState<SolutionStep[]>([]);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
+  const [showCalculationModal, setShowCalculationModal] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch projects
