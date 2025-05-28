@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectsSidebar } from "@/components/projects-sidebar";
 import { GraphCanvas } from "@/components/graph-canvas";
 import { DataInputPanel } from "@/components/data-input-panel";
 import { SolutionModal } from "@/components/solution-modal";
 import { CalculationSelectionModal } from "@/components/calculation-selection-modal";
 import { PhysicsCalculator } from "@/lib/physics-calculator";
-import { apiRequest } from "@/lib/queryClient";
+import { localProjectStorage } from "@/lib/storage";
 import type { PhysicsProject, DataEntry, Force, SolutionStep } from "@/lib/physics-types";
 
 interface PhysicsSimulatorProps {
@@ -19,71 +18,38 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
   const [solutionSteps, setSolutionSteps] = useState<SolutionStep[]>([]);
   const [showSolutionModal, setShowSolutionModal] = useState(false);
   const [showCalculationModal, setShowCalculationModal] = useState(false);
-  const queryClient = useQueryClient();
+  const [projects, setProjects] = useState<PhysicsProject[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch projects
-  const { data: projects = [], isLoading } = useQuery({
-    queryKey: ['/api/projects'],
-    select: (data: any[]) => data.filter(p => p.template === template) as PhysicsProject[]
-  });
-
-  // Create project mutation
-  const createProjectMutation = useMutation({
-    mutationFn: async (projectData: Partial<PhysicsProject>) => {
-      const response = await apiRequest('POST', '/api/projects', projectData);
-      return response.json();
-    },
-    onSuccess: (newProject) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      setCurrentProject(newProject);
-    }
-  });
-
-  // Update project mutation
-  const updateProjectMutation = useMutation({
-    mutationFn: async ({ id, updates }: { id: number; updates: Partial<PhysicsProject> }) => {
-      const response = await apiRequest('PATCH', `/api/projects/${id}`, updates);
-      return response.json();
-    },
-    onSuccess: (updatedProject) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      setCurrentProject(updatedProject);
-    }
-  });
-
-  // Delete project mutation
-  const deleteProjectMutation = useMutation({
-    mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/projects/${id}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
-      if (currentProject && projects.length > 1) {
-        const remainingProjects = projects.filter(p => p.id !== currentProject.id);
-        setCurrentProject(remainingProjects[0] || null);
-      } else {
-        setCurrentProject(null);
-      }
-    }
-  });
-
-  // Auto-select first project or create initial one
+  // Load projects from localStorage
   useEffect(() => {
-    if (!isLoading && projects.length > 0 && !currentProject) {
-      setCurrentProject(projects[0]);
-    } else if (!isLoading && projects.length === 0) {
-      handleNewProject();
-    }
-  }, [projects, isLoading, currentProject]);
+    const loadProjects = () => {
+      const allProjects = localProjectStorage.getProjectsByTemplate(template);
+      setProjects(allProjects);
+      setIsLoading(false);
+      
+      // Auto-select first project or create initial one
+      if (allProjects.length > 0 && !currentProject) {
+        setCurrentProject(allProjects[0]);
+      } else if (allProjects.length === 0) {
+        handleNewProject();
+      }
+    };
+    
+    loadProjects();
+  }, [template, currentProject]);
 
   const handleNewProject = () => {
     const projectName = `Progetto ${projects.length + 1}`;
-    createProjectMutation.mutate({
+    const newProject = localProjectStorage.createProject({
       name: projectName,
       template,
       dataEntries: [],
       forces: []
     });
+    
+    setProjects(localProjectStorage.getProjectsByTemplate(template));
+    setCurrentProject(newProject);
   };
 
   const handleSelectProject = (project: PhysicsProject) => {
@@ -92,7 +58,13 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
 
   const handleDeleteProject = (id: number) => {
     if (confirm('Sei sicuro di voler eliminare questo progetto?')) {
-      deleteProjectMutation.mutate(id);
+      localProjectStorage.deleteProject(id);
+      const updatedProjects = localProjectStorage.getProjectsByTemplate(template);
+      setProjects(updatedProjects);
+      
+      if (currentProject && currentProject.id === id) {
+        setCurrentProject(updatedProjects[0] || null);
+      }
     }
   };
 
@@ -104,13 +76,15 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
       ? [...(currentProject.forces || []), data as Force]
       : currentProject.forces || [];
 
-    updateProjectMutation.mutate({
-      id: currentProject.id,
-      updates: {
-        dataEntries: updatedDataEntries,
-        forces: updatedForces
-      }
+    const updatedProject = localProjectStorage.updateProject(currentProject.id, {
+      dataEntries: updatedDataEntries,
+      forces: updatedForces
     });
+
+    if (updatedProject) {
+      setCurrentProject(updatedProject);
+      setProjects(localProjectStorage.getProjectsByTemplate(template));
+    }
   };
 
   const handleRemoveData = (dataId: number) => {
@@ -119,13 +93,15 @@ export function PhysicsSimulator({ template, onBackToTemplates }: PhysicsSimulat
     const updatedDataEntries = (currentProject.dataEntries || []).filter(d => d.id !== dataId);
     const updatedForces = (currentProject.forces || []).filter(f => f.id !== dataId);
 
-    updateProjectMutation.mutate({
-      id: currentProject.id,
-      updates: {
-        dataEntries: updatedDataEntries,
-        forces: updatedForces
-      }
+    const updatedProject = localProjectStorage.updateProject(currentProject.id, {
+      dataEntries: updatedDataEntries,
+      forces: updatedForces
     });
+
+    if (updatedProject) {
+      setCurrentProject(updatedProject);
+      setProjects(localProjectStorage.getProjectsByTemplate(template));
+    }
   };
 
   const handleCalculateSolution = () => {
