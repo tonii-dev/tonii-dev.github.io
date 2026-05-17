@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAULT · 70K</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070d;
+  --surface: #0e0e18;
+  --surface2: #141421;
+  --border: rgba(212,175,55,0.12);
+  --border-b: rgba(212,175,55,0.32);
+  --gold: #d4af37;
+  --gold-dim: #9a7d2a;
+  --gold-glow: rgba(212,175,55,0.28);
+  --green: #00e87a;
+  --green-dim: #00a855;
+  --green-glow: rgba(0,232,122,0.22);
+  --red: #ff5555;
+  --red-glow: rgba(255,85,85,0.18);
+  --text: #ece6d8;
+  --text-mid: rgba(236,230,216,0.6);
+  --text-dim: rgba(236,230,216,0.32);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Mono',monospace;
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+/* Ambient bg */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -5%, rgba(212,175,55,0.07) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 70% at 85% 90%, rgba(0,80,40,0.05) 0%,transparent 55%);
+}
+/* Grain */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.35;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+}
+
+.wrap{max-width:860px;margin:0 auto;padding:0 1.75rem;position:relative;z-index:1}
+
+/* ── HEADER ── */
+header{
+  padding:2.25rem 0 1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  animation:fadeUp .5s ease both;
+}
+.logo{
+  font-family:'Cormorant Garamond',serif;font-weight:300;
+  font-size:1rem;letter-spacing:.55em;color:var(--gold);text-transform:uppercase;
+}
+.hdr-right{font-size:.58rem;color:var(--text-dim);letter-spacing:.15em;text-align:right;line-height:1.8}
+
+/* ── HERO NUMBER ── */
+.hero{
+  text-align:center;padding:4.5rem 0 2.5rem;
+  animation:fadeUp .5s .1s ease both;
+}
+.hero-label{font-size:.56rem;letter-spacing:.45em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1.1rem}
+.debt-num{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;
+  font-size:clamp(3.5rem,11vw,8.5rem);line-height:1;
+  color:var(--gold);letter-spacing:-.02em;
+  text-shadow:0 0 55px var(--gold-glow),0 0 110px rgba(212,175,55,.08);
+  transition:color 1.4s ease,text-shadow 1.4s ease;
+  animation:pulse 5s ease-in-out infinite;
+}
+.debt-num.done{color:var(--green);text-shadow:0 0 55px var(--green-glow),0 0 110px rgba(0,232,122,.1);animation:none}
+.cur{font-size:.38em;opacity:.45;vertical-align:super;margin-right:.08em}
+.cents{font-size:.36em;opacity:.55;vertical-align:sub}
+.hero-sub{margin-top:1.4rem;font-size:.6rem;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;min-height:1.4em}
+
+/* ── PROGRESS ── */
+.prog-section{padding:0 0 2.5rem;animation:fadeUp .5s .18s ease both}
+.bar-outer{width:100%;height:2px;background:rgba(212,175,55,.07);border-radius:2px;position:relative;overflow:visible;margin-bottom:.85rem}
+.bar-inner{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+  transition:width 1.2s cubic-bezier(.4,0,.2,1);position:relative;
+}
+.bar-inner::after{
+  content:'';position:absolute;right:-3px;top:50%;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 10px var(--gold-glow),0 0 22px var(--gold-glow);
+}
+.bar-meta{display:flex;justify-content:space-between;font-size:.58rem;color:var(--text-dim);letter-spacing:.1em}
+
+/* ── STATS ── */
+.stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:1px;background:var(--border);border:1px solid var(--border);
+  border-radius:2px;overflow:hidden;margin-bottom:2rem;
+  animation:fadeUp .5s .24s ease both;
+}
+.stat{background:var(--surface);padding:1.4rem 1.15rem;transition:background .25s}
+.stat:hover{background:var(--surface2)}
+.stat-lbl{font-size:.52rem;letter-spacing:.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.55rem}
+.stat-val{font-size:1.1rem;font-weight:500;letter-spacing:-.02em;color:var(--text)}
+.stat-val.g{color:var(--gold)}.stat-val.gr{color:var(--green)}.stat-val.r{color:var(--red)}
+.stat-sub{font-size:.52rem;color:var(--text-dim);margin-top:.3rem;letter-spacing:.08em}
+
+/* ── TODAY CARD ── */
+.today-card{
+  border:1px solid var(--border);border-radius:2px;background:var(--surface);
+  padding:1.75rem;margin-bottom:2rem;position:relative;overflow:hidden;
+  animation:fadeUp .5s .3s ease both;
+}
+.today-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.4;
+}
+.today-lbl{font-size:.52rem;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.75rem}
+.today-big{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:2.8rem;color:var(--green);letter-spacing:-.02em;
+  text-shadow:0 0 28px var(--green-glow);
+  transition:transform .18s ease;
+}
+.today-big.tick{transform:scale(1.018)}
+.today-rem{font-size:.58rem;color:var(--text-dim);margin-top:.5rem;letter-spacing:.12em}
+.bar-today{margin-top:1rem}
+
+/* ── LOAN BTN ── */
+.loan-section{text-align:center;padding:.5rem 0 2.75rem;animation:fadeUp .5s .36s ease both}
+.loan-hint{font-size:.58rem;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1.3rem}
+.btn-loan{
+  display:inline-flex;align-items:center;gap:.65rem;
+  padding:.9rem 2.25rem;
+  border:1px solid rgba(255,85,85,.28);background:transparent;
+  color:var(--red);
+  font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
+  cursor:pointer;transition:all .3s ease;border-radius:1px;
+}
+.btn-loan:hover{background:rgba(255,85,85,.05);border-color:rgba(255,85,85,.5);box-shadow:0 0 28px rgba(255,85,85,.1)}
+.btn-loan:active{transform:scale(.99)}
+
+/* ── HISTORY ── */
+.history{padding-bottom:5rem;animation:fadeUp .5s .42s ease both}
+.hist-title{font-size:.52rem;letter-spacing:.35em;color:var(--text-dim);text-transform:uppercase;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+.hist-empty{font-size:.62rem;color:var(--text-dim);letter-spacing:.1em;padding:1.25rem 0;font-style:italic}
+.loan-row{
+  padding:.9rem 0;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:flex-start;
+  animation:fadeUp .35s ease both;
+}
+.loan-date{font-size:.52rem;color:var(--text-dim);letter-spacing:.12em;margin-bottom:.3rem}
+.loan-reason{
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:.88rem;color:var(--text-mid);max-width:480px;line-height:1.55;
+}
+.loan-amt{font-size:.88rem;color:var(--red);white-space:nowrap;font-weight:500;padding-left:1rem}
+
+/* ── NOT STARTED / DONE banners ── */
+.banner-wait{
+  text-align:center;padding:2rem;border:1px solid var(--border);background:var(--surface);
+  margin-bottom:2rem;font-size:.6rem;color:var(--text-dim);letter-spacing:.2em;text-transform:uppercase;line-height:2;
+  animation:fadeUp .5s .08s ease both;
+}
+.cdown-big{
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2.5rem;
+  color:var(--gold);display:block;margin-top:.5rem;text-shadow:0 0 40px var(--gold-glow);
+}
+.banner-done{
+  text-align:center;padding:3rem 2rem;
+  border:1px solid rgba(0,232,122,.18);background:rgba(0,232,122,.025);
+  margin-bottom:2rem;animation:fadeUp .5s ease both;
+}
+.banner-done h2{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:3rem;color:var(--green);font-weight:300;text-shadow:0 0 40px var(--green-glow)}
+.banner-done p{font-size:.6rem;color:var(--text-dim);letter-spacing:.25em;margin-top:.85rem;text-transform:uppercase}
+
+/* ── MODAL ── */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);
+  backdrop-filter:blur(10px);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:1.5rem;
+  opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{
+  width:100%;max-width:600px;max-height:88vh;overflow-y:auto;
+  background:var(--surface);border:1px solid var(--border-b);border-radius:2px;
+  transform:scale(.96) translateY(12px);
+  transition:transform .35s cubic-bezier(.34,1.15,.64,1);position:relative;
+}
+.overlay.open .modal{transform:scale(1) translateY(0)}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.modal-hdr{padding:1.75rem 1.75rem 1.1rem;border-bottom:1px solid var(--border)}
+.modal-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-size:1.55rem;color:var(--red);margin-bottom:.45rem;letter-spacing:.04em}
+.modal-sub{font-size:.58rem;color:var(--text-dim);letter-spacing:.18em;text-transform:uppercase;line-height:1.7}
+.modal-sub strong{color:var(--text)}
+.modal-body{padding:1.4rem 1.75rem}
+.clauses-lbl{font-size:.52rem;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.85rem}
+.cl{
+  display:flex;align-items:flex-start;gap:.85rem;padding:.8rem 0;
+  border-bottom:1px solid rgba(212,175,55,.06);cursor:pointer;transition:opacity .2s;
+}
+.cl:last-of-type{border-bottom:none}
+.cl:hover{opacity:.85}
+.cbox{
+  width:15px;height:15px;min-width:15px;margin-top:2px;
+  border:1px solid rgba(212,175,55,.28);border-radius:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .18s ease;font-size:9px;color:var(--bg);font-weight:700;
+}
+.cl.on .cbox{background:var(--gold);border-color:var(--gold)}
+.cl.on .cbox::after{content:'✓'}
+.cl-txt{font-size:.67rem;color:var(--text-mid);letter-spacing:.03em;line-height:1.65}
+.cl.on .cl-txt{color:var(--text-dim)}
+.reason-wrap{margin-top:1.4rem;padding-top:1.4rem;border-top:1px solid var(--border)}
+.reason-lbl{font-size:.52rem;letter-spacing:.3em;color:var(--text-dim);text-transform:uppercase;margin-bottom:.65rem;display:block}
+textarea.reason{
+  width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.95rem;
+  padding:.9rem 1rem;border-radius:1px;resize:none;height:76px;outline:none;
+  letter-spacing:.025em;transition:border-color .2s;line-height:1.5;
+}
+textarea.reason:focus{border-color:rgba(212,175,55,.32)}
+.reason-cnt{text-align:right;font-size:.52rem;color:var(--text-dim);margin-top:.3rem;letter-spacing:.1em}
+.reason-cnt.ok{color:var(--green)}
+.modal-ftr{padding:.9rem 1.75rem 1.75rem;display:flex;gap:.85rem;align-items:center}
+.btn-cancel{
+  flex:1;padding:.8rem;background:transparent;border:1px solid var(--border);
+  color:var(--text-dim);font-family:'DM Mono',monospace;font-size:.57rem;
+  letter-spacing:.25em;text-transform:uppercase;cursor:pointer;
+  transition:all .2s;border-radius:1px;
+}
+.btn-cancel:hover{border-color:rgba(236,230,216,.22);color:var(--text)}
+.btn-ok{
+  flex:2;padding:.8rem;background:rgba(255,85,85,.08);
+  border:1px solid rgba(255,85,85,.28);color:var(--red);
+  font-family:'DM Mono',monospace;font-size:.57rem;letter-spacing:.25em;
+  text-transform:uppercase;cursor:pointer;
+  transition:all .3s;border-radius:1px;opacity:.3;pointer-events:none;
+}
+.btn-ok.live{opacity:1;pointer-events:all}
+.btn-ok.live:hover{background:rgba(255,85,85,.18);box-shadow:0 0 22px rgba(255,85,85,.12)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--border-b);border-radius:3px}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{text-shadow:0 0 55px var(--gold-glow),0 0 110px rgba(212,175,55,.08)}50%{text-shadow:0 0 75px rgba(212,175,55,.38),0 0 150px rgba(212,175,55,.13)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:620px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .debt-num{font-size:clamp(3rem,14vw,4.5rem)}
+  header{flex-direction:column;gap:.75rem;text-align:center}
+  .modal-hdr,.modal-body,.modal-ftr{padding-left:1.1rem;padding-right:1.1rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Vault</div>
+    <div class="hdr-right" id="hdr-right">ACCOUNT N° 0070-4070<br>07.04.2026 — 15.06.2026</div>
+  </header>
+
+  <!-- DYNAMIC BANNER (wait / done) -->
+  <div id="banner"></div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-label">Debito Residuo</div>
+    <div class="debt-num" id="debt-num">
+      <span class="cur">€</span><span id="di">70.000</span><span class="cents" id="dc">,00</span>
+    </div>
+    <div class="hero-sub" id="hero-sub">INIZIALIZZAZIONE…</div>
+  </section>
+
+  <!-- PROGRESS BAR -->
+  <section class="prog-section">
+    <div class="bar-outer">
+      <div class="bar-inner" id="pbar" style="width:0%"></div>
+    </div>
+    <div class="bar-meta">
+      <span>07 APR 2026</span>
+      <span id="pct-lbl">0%</span>
+      <span>15 GIU 2026</span>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-lbl">Pagato Oggi</div>
+      <div class="stat-val gr" id="s-today">€ 0,00</div>
+      <div class="stat-sub" id="s-today-p">0% della giornata</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Pagato Totale</div>
+      <div class="stat-val g" id="s-total">€ 0,00</div>
+      <div class="stat-sub" id="s-total-d">0 giorni chiusi</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Giorni Rimasti</div>
+      <div class="stat-val" id="s-left">70</div>
+      <div class="stat-sub" id="s-end">Scadenza: 15 giu</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Prestiti Extra</div>
+      <div class="stat-val" id="s-pen" style="color:var(--text-dim)">€ 0</div>
+      <div class="stat-sub" id="s-pen-d">0 giorni extra</div>
+    </div>
+  </section>
+
+  <!-- TODAY CARD -->
+  <section class="today-card" id="today-card">
+    <div class="today-lbl">Versamento Odierno — in tempo reale</div>
+    <div class="today-big" id="today-big">€ 0,00</div>
+    <div class="today-rem" id="today-rem">Oggi hai ancora € 1.000,00 da versare</div>
+    <div class="bar-today">
+      <div class="bar-outer" style="height:1px">
+        <div class="bar-inner" id="tbar" style="width:0%;background:linear-gradient(90deg,var(--green-dim),var(--green))"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOAN BUTTON -->
+  <section class="loan-section">
+    <div class="loan-hint">Stai cedendo?</div>
+    <button class="btn-loan" id="btn-loan">⚠ &nbsp;Richiedi Prestito Aggiuntivo</button>
+  </section>
+
+  <!-- HISTORY -->
+  <section class="history">
+    <div class="hist-title">Registro Prestiti Aggiuntivi</div>
+    <div id="hist-list"><div class="hist-empty">Nessun prestito aggiuntivo. Tieni duro.</div></div>
+  </section>
+
+</div><!-- /wrap -->
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Richiesta di Prestito</div>
+      <div class="modal-sub">
+        Stai aggiungendo <strong>€ 1.000</strong> al debito — esattamente <strong>1 giorno in più</strong> di cut.<br>
+        Leggi, comprendi, e accetta ogni clausola. Non esistono scorciatoie.
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="clauses-lbl">Clausole — tutte obbligatorie</div>
+      <div id="cl-list"><!-- JS --></div>
+      <div class="reason-wrap">
+        <label class="reason-lbl" for="reason">Motivazione &mdash; minimo 50 caratteri</label>
+        <textarea class="reason" id="reason" placeholder="Spiega nel dettaglio perché stai richiedendo questo prestito..." maxlength="300"></textarea>
+        <div class="reason-cnt" id="rcnt">0 / 50</div>
+      </div>
+    </div>
+    <div class="modal-ftr">
+      <button class="btn-cancel" id="btn-cancel">Annulla</button>
+      <button class="btn-ok" id="btn-ok"><span id="cd-lbl"></span>Confermo il Prestito</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+// ══════════════════════════════════════════════════════
+//  ⚙️  CONFIGURAZIONE FIREBASE  (obbligatoria per shared DB)
+//
+//  1. Vai su https://console.firebase.google.com
+//  2. Crea progetto → "Aggiungi app web" → copia la config
+//  3. Vai su Realtime Database → Crea database → modalità TEST
+//  4. Sostituisci i valori qui sotto con i tuoi
+//  5. Fai push su GitHub → GitHub Pages lo servirà
+//
+//  Senza config funziona solo con localStorage (locale).
+// ══════════════════════════════════════════════════════
+const FB = {
+  apiKey:            "AIzaSyDjUW-000TIA2nydcyzb5E9K83jb_97L-A",
+  authDomain:        "vault-cut.firebaseapp.com",
+  databaseURL:       "https://vault-cut-default-rtdb.europe-west1.firebasedatabase.app",   // es. "https://mio-progetto-default-rtdb.firebaseio.com"
+  projectId:         "vault-cut",
+  storageBucket:     "vault-cut.firebasestorage.app",
+  messagingSenderId: "6324442774",
+  appId:             "1:6324442774:web:05110658e05da4469d54b7"
+};
+const USE_FB = FB.databaseURL !== "";
+
+// ── COSTANTI ──
+const START   = new Date('2026-04-07T00:00:00');
+const DAYS    = 70;
+const DAILY   = 1000;
+const BASE    = DAYS * DAILY; // 70000
+// END si calcola dinamicamente in base ai prestiti extra
+
+// ── CLAUSOLE ──
+const CLAUSES = [
+  "Ho aspettato almeno 20 minuti da quando è venuta la voglia. Non è scomparsa.",
+  "Sto prendendo questa decisione con la testa lucida — non sono in stato di fame acuta, stress, o noia.",
+  "Ho bevuto almeno 500ml d'acqua e aspettato ancora. Confermo che non era sete.",
+  "Capisco che questo prestito sposta la fine del cut di esattamente 1 giorno intero.",
+  "Non sto mangiando per noia, stress, abitudine sociale, 'me lo merito', o compensazione emotiva.",
+  "So distinguere fame fisiologica da fame psicologica. Quella che sento adesso è fisiologica.",
+  "Tra una settimana guarderò questa scelta con rispetto — non con vergogna o rimpianto.",
+  "Accetto che questo prestito sia registrato in modo permanente e visibile a chiunque apra il sito.",
+  "L'obiettivo originale — completare il cut al 100% — è ancora il mio obiettivo reale. Non lo sto abbandonando.",
+  "Prendo questa decisione in autonomia e piena responsabilità. Non la attribuirò a circostanze esterne."
+];
+
+// ── STATE ──
+let loans = [];
+let checked = new Set();
+let cdTimer = null;
+let cdSec = 10;
+let lastState = null;
+
+// ── FIREBASE INIT ──
+let fbPush = null;
+if (USE_FB) {
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const { getDatabase, ref, onValue, push } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+  const app = initializeApp(FB);
+  const db  = getDatabase(app);
+  const r   = ref(db, 'vault_loans');
+  onValue(r, snap => {
+    const d = snap.val();
+    loans = d ? Object.values(d) : [];
+    renderHistory();
+  });
+  fbPush = (loan) => push(r, loan);
+} else {
+  try { loans = JSON.parse(localStorage.getItem('vault_loans') || '[]'); } catch(e) { loans = []; }
+  fbPush = (loan) => {
+    loans.push(loan);
+    localStorage.setItem('vault_loans', JSON.stringify(loans));
+    renderHistory();
+  };
+}
+
+// ── HELPERS ──
+const fmt = (n, d=2) => new Intl.NumberFormat('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d}).format(n);
+const fmtDate = d => d.toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+// ── RENDER HISTORY ──
+function renderHistory() {
+  const el = document.getElementById('hist-list');
+  if (!loans.length) {
+    el.innerHTML = '<div class="hist-empty">Nessun prestito aggiuntivo. Tieni duro.</div>';
+    return;
+  }
+  el.innerHTML = [...loans].reverse().map(l => `
+    <div class="loan-row">
+      <div>
+        <div class="loan-date">${fmtDate(new Date(l.date))}</div>
+        <div class="loan-reason">"${l.reason}"</div>
+      </div>
+      <div class="loan-amt">+€ ${fmt(l.amount||1000)}</div>
+    </div>
+  `).join('');
+}
+
+// ── MAIN LOOP ──
+let lastCents = -1;
+function tick() {
+  const now   = new Date();
+  const extra = loans.reduce((s,l) => s+(l.amount||1000), 0);
+  const total = BASE + extra;
+
+  const secPassed = now >= START ? (now - START) / 1000 : 0;
+  const paid      = now >= START ? Math.min(secPassed / 86400 * DAILY, total) : 0;
+  const remaining = Math.max(0, total - paid);
+  const state     = now < START ? 'wait' : (remaining <= 0 ? 'done' : 'run');
+
+  // ── STRUCTURAL CHANGES — only on state transition ──
+  if (state !== lastState) {
+    lastState = state;
+    const banner = document.getElementById('banner');
+    if (state === 'wait') {
+      banner.innerHTML = `<div class="banner-wait">Il cut inizia il 7 Aprile 2026<span class="cdown-big" id="cdown-txt">…</span>Preparati.</div>`;
+    } else if (state === 'done') {
+      banner.innerHTML = `<div class="banner-done"><h2>Debito Estinto.</h2><p>70 giorni di cut completati. Hai vinto.</p></div>`;
+    } else {
+      banner.innerHTML = '';
+    }
+    document.getElementById('today-card').style.display = state === 'run' ? '' : 'none';
+    document.getElementById('debt-num').classList.toggle('done', state === 'done');
+  }
+
+  // ── WAITING ──
+  if (state === 'wait') {
+    const ms = START - now;
+    const ct = document.getElementById('cdown-txt');
+    if (ct) ct.textContent = `${Math.floor(ms/3600000)}h ${Math.floor((ms%3600000)/60000)}m ${Math.floor((ms%60000)/1000)}s`;
+    document.getElementById('di').textContent = fmt(70000,0);
+    document.getElementById('dc').textContent = ',00';
+    document.getElementById('hero-sub').textContent = 'IN ATTESA — DEBITO APERTO';
+    document.getElementById('pbar').style.width = '0%';
+    document.getElementById('pct-lbl').textContent = '0%';
+    document.getElementById('hdr-right').innerHTML = `ACCOUNT N° 0070-4070<br>${now.toLocaleDateString('it-IT')} — ${now.toLocaleTimeString('it-IT')}`;
+    return;
+  }
+
+  // ── DONE ──
+  if (state === 'done') {
+    document.getElementById('di').textContent = '0';
+    document.getElementById('dc').textContent = ',00';
+    document.getElementById('hero-sub').textContent = '✓ OBIETTIVO RAGGIUNTO — DEBITO CHIUSO';
+    document.getElementById('pbar').style.width = '100%';
+    document.getElementById('pct-lbl').textContent = '100%';
+    return;
+  }
+
+  // ── RUNNING — update text nodes only ──
+  const pct      = Math.min(100, paid / total * 100);
+  const intPart  = Math.floor(remaining);
+  const centPart = Math.floor((remaining - intPart) * 100);
+  document.getElementById('di').textContent = fmt(intPart, 0);
+  if (centPart !== lastCents) {
+    document.getElementById('dc').textContent = ',' + String(centPart).padStart(2,'0');
+    lastCents = centPart;
+  }
+  document.getElementById('debt-num').classList.toggle('done', pct > 70);
+  document.getElementById('hero-sub').textContent = `${fmt(paid)} € versati — ${pct.toFixed(2)}% completato`;
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('pct-lbl').textContent = pct.toFixed(1) + '%';
+
+  const startOfToday = new Date(now); startOfToday.setHours(0,0,0,0);
+  const secToday     = (now - startOfToday) / 1000;
+  const todayPaid    = Math.min(secToday / 86400 * DAILY, DAILY);
+  const todayPct     = todayPaid / DAILY * 100;
+  const daysCompleted = Math.floor(paid / DAILY);
+  const daysLeft      = Math.ceil(remaining / DAILY);
+
+  document.getElementById('s-today').textContent   = '€ ' + fmt(todayPaid);
+  document.getElementById('s-today-p').textContent = todayPct.toFixed(1) + '% della giornata';
+  document.getElementById('s-total').textContent   = '€ ' + fmt(paid);
+  document.getElementById('s-total-d').textContent = daysCompleted + ' giorni chiusi';
+  document.getElementById('s-left').textContent    = daysLeft;
+
+  const penEl = document.getElementById('s-pen');
+  if (extra > 0) {
+    penEl.textContent = '€ ' + fmt(extra);
+    penEl.className = 'stat-val r';
+    penEl.style.color = '';
+    document.getElementById('s-pen-d').textContent = `+${loans.length} ${loans.length===1?'giorno':'giorni'} extra`;
+  } else {
+    penEl.textContent = '€ 0';
+    penEl.className = 'stat-val';
+    penEl.style.color = 'var(--text-dim)';
+    document.getElementById('s-pen-d').textContent = '0 giorni extra';
+  }
+
+  document.getElementById('today-big').textContent = '€ ' + fmt(todayPaid);
+  const todayLeft = DAILY - todayPaid;
+  const midnight  = new Date(startOfToday.getTime() + 86400000);
+  document.getElementById('today-rem').textContent = todayLeft > 0.005
+    ? `Mancano ancora € ${fmt(todayLeft)} — giornata finisce alle ${midnight.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}`
+    : '✓ Giornata completata — un giorno in meno sul conto';
+  document.getElementById('tbar').style.width = todayPct + '%';
+  document.getElementById('hdr-right').innerHTML =
+    `ACCOUNT N° 0070-4070<br>${now.toLocaleDateString('it-IT')} — ${now.toLocaleTimeString('it-IT')}`;
+}
+
+// ── MODAL ──
+function buildClauses() {
+  checked.clear();
+  document.getElementById('cl-list').innerHTML = CLAUSES.map((txt,i) => `
+    <div class="cl" data-i="${i}">
+      <div class="cbox"></div>
+      <div class="cl-txt">${i+1}. ${txt}</div>
+    </div>
+  `).join('');
+  document.querySelectorAll('.cl').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = +el.dataset.i;
+      checked.has(i) ? (checked.delete(i), el.classList.remove('on')) : (checked.add(i), el.classList.add('on'));
+      evalReady();
+    });
+  });
+}
+
+function evalReady() {
+  const allChecked  = checked.size === CLAUSES.length;
+  const reasonValid = document.getElementById('reason').value.trim().length >= 50;
+  if (allChecked && reasonValid && !cdTimer) startCd();
+  else if (!allChecked || !reasonValid) stopCd();
+}
+
+function startCd() {
+  cdSec = 10;
+  const btn = document.getElementById('btn-ok');
+  const lbl = document.getElementById('cd-lbl');
+  lbl.textContent = `(${cdSec}) `;
+  cdTimer = setInterval(() => {
+    cdSec--;
+    if (cdSec <= 0) { clearInterval(cdTimer); cdTimer = null; lbl.textContent = ''; btn.classList.add('live'); }
+    else lbl.textContent = `(${cdSec}) `;
+  }, 1000);
+}
+
+function stopCd() {
+  if (cdTimer) { clearInterval(cdTimer); cdTimer = null; }
+  document.getElementById('cd-lbl').textContent = '';
+  document.getElementById('btn-ok').classList.remove('live');
+}
+
+function openModal() {
+  stopCd();
+  buildClauses();
+  document.getElementById('reason').value = '';
+  document.getElementById('rcnt').textContent = '0 / 50';
+  document.getElementById('rcnt').classList.remove('ok');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  stopCd();
+}
+async function confirmLoan() {
+  const reason = document.getElementById('reason').value.trim();
+  const loan = { date: new Date().toISOString(), amount: 1000, reason };
+  await fbPush(loan);
+  if (!USE_FB) renderHistory();
+  closeModal();
+}
+
+document.getElementById('btn-loan').addEventListener('click', openModal);
+document.getElementById('btn-cancel').addEventListener('click', closeModal);
+document.getElementById('btn-ok').addEventListener('click', confirmLoan);
+document.getElementById('overlay').addEventListener('click', e => { if (e.target===document.getElementById('overlay')) closeModal(); });
+document.getElementById('reason').addEventListener('input', e => {
+  const n = e.target.value.trim().length;
+  const el = document.getElementById('rcnt');
+  el.textContent = `${n} / 50`;
+  el.classList.toggle('ok', n >= 50);
+  evalReady();
+});
+
+// ── START ──
+renderHistory();
+tick();
+setInterval(tick, 400);
+</script>
+</body>
+</html>
