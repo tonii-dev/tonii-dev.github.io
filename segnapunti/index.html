@@ -340,7 +340,12 @@ if (db) {
     const val = snap.val();
     if (val) {
       currentState = { ...JSON.parse(JSON.stringify(defaultState)), ...val };
-      if (!currentState.events) currentState.events = [];
+      // Firebase salva gli eventi con .push() -> arrivano come oggetto {key: event}, non array
+      if (!currentState.events || !Array.isArray(currentState.events)) {
+        currentState.events = currentState.events
+          ? Object.values(currentState.events)
+          : [];
+      }
       if (!currentState.clock) currentState.clock = { running: false, startTime: 0, accumulated: 0 };
     }
     notifyListeners(); // sempre, anche se val è null
@@ -379,7 +384,8 @@ const actions = {
     this.setScore(team, newScore);
   },
   startClock() {
-    const update = { running: true, startTime: Date.now() };
+    const accumulated = Number(currentState.clock?.accumulated) || 0;
+    const update = { running: true, startTime: Date.now(), accumulated };
     if (useFirebase) db.ref('tournament/clock').update(update);
     else { currentState.clock = { ...currentState.clock, ...update }; saveState(); notifyListeners(); }
   },
@@ -457,8 +463,10 @@ function formatTime(seconds) {
 function getCurrentClockTime() {
   const c = currentState.clock;
   if (!c) return 0;
-  if (c.running && c.startTime) return c.accumulated + (Date.now() - c.startTime) / 1000;
-  return c.accumulated || 0;
+  const accumulated = Number(c.accumulated) || 0;
+  const startTime = Number(c.startTime) || 0;
+  if (c.running && startTime) return accumulated + (Date.now() - startTime) / 1000;
+  return accumulated;
 }
 
 function showToast(text, type = 'success') {
@@ -631,7 +639,7 @@ function updateProjector(state) {
   
   const eventsEl = document.getElementById('pptEvents');
   if (eventsEl) {
-    const events = (state.events || [])
+    const events = (Array.isArray(state.events) ? state.events : Object.values(state.events || {}))
       .slice()
       .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
       .slice(0, 12);
@@ -850,7 +858,7 @@ function updateControl(state) {
   
   const list = document.getElementById('ctrlEventsList');
   if (list) {
-    const events = (state.events || [])
+    const events = (Array.isArray(state.events) ? state.events : Object.values(state.events || {}))
       .slice()
       .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
     
