@@ -250,15 +250,37 @@ const firebaseConfig = {
 let db = null;
 let useFirebase = false;
 
+function updateConnectionStatus(connected) {
+  useFirebase = connected;
+  const el = document.querySelector('.connector-status');
+  if (el) {
+    el.className = 'connector-status' + (connected ? '' : ' local');
+    const dot = el.querySelector('.dot');
+    const label = el.querySelector('.connector-label');
+    if (label) label.textContent = connected ? 'Firebase' : 'Locale';
+  }
+  const footer = document.querySelector('.landing-footer span:last-child');
+  if (footer) {
+    footer.textContent = connected
+      ? 'Connesso a Firebase Realtime Database'
+      : 'Modalità locale attiva — apri in più schede per testare';
+  }
+}
+
 try {
-  const isConfigured = !firebaseConfig.apiKey.includes("YOUR_");
-  if (isConfigured && typeof firebase !== 'undefined') {
+  if (typeof firebase !== 'undefined') {
     firebase.initializeApp(firebaseConfig);
     db = firebase.database();
-    useFirebase = true;
+
+    // Verifica connessione reale tramite nodo .info/connected
+    db.ref('.info/connected').on('value', (snap) => {
+      updateConnectionStatus(snap.val() === true);
+    });
   }
 } catch(e) {
   console.warn('Firebase non disponibile, uso modalità locale:', e);
+  db = null;
+  useFirebase = false;
 }
 
 /* ===== STORE ===== */
@@ -313,7 +335,7 @@ window.addEventListener('storage', (e) => {
 });
 
 // Sottoscrizione Firebase
-if (useFirebase) {
+if (db) {
   db.ref('tournament').on('value', (snap) => {
     const val = snap.val();
     if (val) {
@@ -321,6 +343,12 @@ if (useFirebase) {
       if (!currentState.events) currentState.events = [];
       if (!currentState.clock) currentState.clock = { running: false, startTime: 0, accumulated: 0 };
     }
+    notifyListeners(); // sempre, anche se val è null
+  }, (err) => {
+    console.error('Errore lettura Firebase:', err);
+    useFirebase = false;
+    updateConnectionStatus(false);
+    loadState(); // fallback locale
     notifyListeners();
   });
 }
@@ -496,7 +524,7 @@ function renderHome(app) {
       </div>
       <div class="landing-footer">
         <span class="status-dot"></span>
-        <span>${useFirebase ? 'Connesso a Firebase Realtime Database' : 'Modalità locale attiva — apri in più schede per testare'}</span>
+        <span>${db ? 'Connessione a Firebase in corso…' : 'Modalità locale attiva — apri in più schede per testare'}</span>
       </div>
     </div>
   `;
