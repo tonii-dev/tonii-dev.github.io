@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Giustizia in Aula — Percorso PCTO</title>
+<style>
+  :root{
+    --notte: #0B1F3A;
+    --notte-2: #122A4D;
+    --oro: #B08D45;
+    --oro-chiaro: #D8BD7F;
+    --avorio: #EDE6D6;
+    --carta: #F6F1E7;
+    --accusa: #7A2E2E;
+    --difesa: #2F4F3E;
+    --giudice: #4A3B6B;
+    --inchiostro: #1B1B1B;
+    --serif: "Cambria", "Century Schoolbook", Georgia, serif;
+    --sans: "Calibri", Arial, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--notte);
+    font-family: var(--sans);
+    color: var(--inchiostro);
+    overflow-x:hidden;
+  }
+  ::selection{ background: var(--oro-chiaro); }
+
+  /* ============ scaffolding ============ */
+  .stage{
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+  }
+
+  .top-seal{
+    position: fixed;
+    top: 18px; right: 22px;
+    z-index: 50;
+    opacity: 0.85;
+  }
+
+  /* ============ NAV ============ */
+  nav{
+    position: sticky;
+    top:0; z-index: 40;
+    background: var(--notte);
+    border-bottom: 1px solid rgba(216,189,127,0.25);
+    display:flex;
+    align-items:center;
+    gap: 4px;
+    padding: 0 20px;
+    overflow-x:auto;
+  }
+  nav .brand{
+    font-family: var(--serif);
+    color: var(--avorio);
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    padding: 14px 18px 14px 0;
+    white-space:nowrap;
+    border-right: 1px solid rgba(216,189,127,0.2);
+    margin-right: 8px;
+  }
+  nav button{
+    background: transparent;
+    border: none;
+    color: rgba(237,230,214,0.6);
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    padding: 16px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    transition: color 0.2s ease;
+  }
+  nav button:hover{ color: var(--avorio); }
+  nav button.active{ color: var(--oro-chiaro); }
+  nav button.active::after{
+    content:"";
+    position:absolute;
+    left: 14px; right:14px; bottom: 0;
+    height: 2px;
+    background: var(--oro-chiaro);
+  }
+  nav button:focus-visible{ outline: 2px solid var(--oro-chiaro); outline-offset: 2px; }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .35s ease; }
+  @keyframes fade{ from{ opacity:0; transform: translateY(6px);} to{ opacity:1; transform:none; } }
+
+  /* ============ HERO (Il progetto) ============ */
+  .hero{
+    background: radial-gradient(ellipse at 30% 0%, var(--notte-2), var(--notte) 70%);
+    color: var(--avorio);
+    padding: 64px 8vw 70px;
+    position: relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 50px;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .eyebrow{
+    font-size: 12.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--oro-chiaro);
+    margin-bottom: 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .dot{ width:6px; height:6px; border-radius:50%; background:var(--oro-chiaro); }
+  h1.title{
+    font-family: var(--serif);
+    font-size: 46px;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    font-weight: 700;
+  }
+  h1.title em{
+    font-style: italic;
+    color: var(--oro-chiaro);
+  }
+  .lede{
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(237,230,214,0.85);
+    max-width: 480px;
+    margin-bottom: 28px;
+  }
+  .hero-stats{
+    display:flex;
+    gap: 28px;
+    margin-top: 8px;
+  }
+  .stat-block{ }
+  .stat-num{
+    font-family: var(--serif);
+    font-size: 34px;
+    color: var(--oro-chiaro);
+    line-height: 1;
+  }
+  .stat-label{
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    color: rgba(237,230,214,0.6);
+    margin-top: 6px;
+  }
+
+  /* the seal / signature element */
+  .seal-wrap{ display:flex; justify-content:center; }
+  .seal{ width: 260px; height: 260px; }
+
+  .scroll-cue{
+    text-align:center;
+    color: rgba(237,230,214,0.45);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    margin-top: 50px;
+    text-transform: uppercase;
+  }
+
+  /* ============ section shared ============ */
+  .section{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 64px 8vw;
+  }
+  .section.on-carta{ background: var(--carta); }
+  .section-head{ margin-bottom: 40px; max-width: 700px; }
+  .section-eyebrow{
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--oro);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  h2.section-title{
+    font-family: var(--serif);
+    font-size: 32px;
+    color: var(--notte);
+    margin: 0 0 12px;
+  }
+  .section-sub{
+    font-size: 15px;
+    color: #444;
+    line-height: 1.6;
+  }
+
+  .on-notte{ background: var(--notte); color: var(--avorio); }
+  .on-notte h2.section-title{ color: var(--avorio); }
+  .on-notte .section-sub{ color: rgba(237,230,214,0.75); }
+
+  /* ============ OBIETTIVI cards ============ */
+  .obj-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .obj-card{
+    background: #fff;
+    border-radius: 10px;
+    padding: 22px 20px;
+    box-shadow: 0 4px 18px rgba(11,31,58,0.08);
+  }
+  .obj-icon{
+    width: 38px; height:38px;
+    border-radius: 50%;
+    background: var(--notte);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 14px;
+  }
+  .obj-icon svg{ width:18px; height:18px; }
+  .obj-card h4{
+    font-family: var(--serif);
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: var(--notte);
+  }
+  .obj-card p{
+    font-size: 13px;
+    color: #555;
+    line-height: 1.55;
+    margin:0;
+  }
+
+  /* ============ TIMELINE (Le fasi) ============ */
+  .timeline-rail{
+    display:flex;
+    gap: 0;
+    margin-bottom: 36px;
+    border-bottom: 1px solid rgba(11,31,58,0.15);
+  }
+  .rail-stop{
+    flex:1;
+    text-align:left;
+    background:none;
+    border:none;
+    padding: 14px 10px 18px;
+    cursor:pointer;
+    position:relative;
+    color: #8a8a8a;
+  }
+  .rail-stop .rn{
+    font-family: var(--serif);
+    font-size: 22px;
+    color: #b9b9b9;
+    display:block;
+    margin-bottom: 6px;
+  }
+  .rail-stop .rt{
+    font-size: 12.5px;
+    font-weight:600;
+    letter-spacing:0.02em;
+    color:#777;
+  }
+  .rail-stop .rh{
+    font-size: 11px;
+    color:#999;
+    margin-top:3px;
+  }
+  .rail-stop::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-1px;
+    height:3px;
+    background: transparent;
+  }
+  .rail-stop.active .rn{ color: var(--notte); }
+  .rail-stop.active .rt{ color: var(--notte); }
+  .rail-stop.active::after{ background: var(--oro); }
+  .rail-stop:hover .rn{ color: var(--oro); }
+  .rail-stop:focus-visible{ outline: 2px solid var(--oro); outline-offset:2px; }
+
+  .fase-detail{ display:none; }
+  .fase-detail.active{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; animation: fade .3s ease; }
+  .fase-detail h3{
+    font-family: var(--serif);
+    font-size: 24px;
+    color: var(--notte);
+    margin: 0 0 6px;
+  }
+  .fase-meta{
+    font-size: 12.5px;
+    color: var(--oro);
+    font-weight:600;
+    letter-spacing:0.03em;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .fase-detail ul{
+    margin:0; padding:0; list-style:none;
+  }
+  .fase-detail li{
+    padding: 10px 0 10px 26px;
+    border-bottom: 1px solid rgba(11,31,58,0.08);
+    font-size: 14px;
+    color:#333;
+    position:relative;
+    line-height:1.5;
+  }
+  .fase-detail li::before{
+    content:"";
+    position:absolute;
+    left:0; top:16px;
+    width:8px; height:8px;
+    border-radius:50%;
+    background: var(--oro);
+  }
+  .fase-side{
+    background: #fff;
+    border-radius: 10px;
+    padding: 22px;
+    box-shadow: 0 4px 18px rgba(11,31,58,0.08);
+  }
+  .fase-side .fl{
+    font-size: 11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:#999;
+    margin-bottom:6px;
+  }
+  .fase-side p{
+    font-size: 14px;
+    line-height:1.6;
+    color:#444;
+    margin: 0 0 18px;
+  }
+  .chiplist{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    background: var(--notte);
+    color: var(--avorio);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+
+  /* ============ RUOLI (i ruoli del processo) ============ */
+  .ruoli-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .ruolo-card{
+    border-radius: 14px;
+    padding: 26px 22px;
+    cursor:pointer;
+    border: 1px solid rgba(237,230,214,0.15);
+    background: var(--notte-2);
+    transition: transform .2s ease, box-shadow .2s ease;
+    text-align:left;
+  }
+  .ruolo-card:hover{ transform: translateY(-3px); }
+  .ruolo-card:focus-visible{ outline: 2px solid var(--oro-chiaro); }
+  .ruolo-tag{
+    display:inline-block;
+    font-size: 11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    font-weight:600;
+  }
+  .tag-accusa{ background: rgba(122,46,46,0.25); color:#E8A9A9; }
+  .tag-difesa{ background: rgba(47,79,62,0.3); color:#9FCBAE; }
+  .tag-giudice{ background: rgba(74,59,107,0.3); color:#C6B6E8; }
+
+  .ruolo-card h4{
+    font-family: var(--serif);
+    color: var(--avorio);
+    font-size: 19px;
+    margin: 0 0 10px;
+  }
+  .ruolo-card p.short{
+    font-size: 13px;
+    color: rgba(237,230,214,0.65);
+    margin:0;
+    line-height:1.55;
+  }
+  .ruolo-card .full{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .35s ease;
+  }
+  .ruolo-card.open .full{ max-height: 260px; margin-top:14px; }
+  .ruolo-card .full ul{ margin:0; padding-left:18px; }
+  .ruolo-card .full li{
+    font-size: 13px;
+    color: rgba(237,230,214,0.8);
+    margin-bottom:7px;
+    line-height:1.5;
+  }
+  .ruolo-expand-hint{
+    font-size:11.5px;
+    color: var(--oro-chiaro);
+    margin-top:16px;
+    letter-spacing:0.03em;
+  }
+
+  /* ============ DIBATTIMENTO simulator ============ */
+  .courtroom{
+    display:grid;
+    grid-template-columns: 280px 1fr;
+    gap: 36px;
+  }
+  .step-list{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .step-item{
+    display:flex;
+    align-items:center;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    cursor:pointer;
+    background: transparent;
+    border:none;
+    text-align:left;
+    width:100%;
+  }
+  .step-item:hover{ background: rgba(176,141,69,0.08); }
+  .step-item.active{ background: rgba(176,141,69,0.16); }
+  .step-num{
+    width: 28px; height:28px;
+    border-radius:50%;
+    background: rgba(11,31,58,0.08);
+    color: var(--notte);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px;
+    font-weight:700;
+    font-family: var(--serif);
+    flex-shrink:0;
+  }
+  .step-item.active .step-num{ background: var(--notte); color: var(--oro-chiaro); }
+  .step-item .step-label{
+    font-size: 13.5px;
+    color: #444;
+    font-weight: 600;
+  }
+  .step-item.active .step-label{ color: var(--notte); }
+
+  .courtroom-stage{
+    background: var(--notte);
+    border-radius: 14px;
+    padding: 36px;
+    color: var(--avorio);
+    min-height: 360px;
+    position:relative;
+    overflow:hidden;
+  }
+  .courtroom-stage .stage-eyebrow{
+    font-size: 11.5px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color: var(--oro-chiaro);
+    margin-bottom: 14px;
+  }
+  .courtroom-stage h3{
+    font-family: var(--serif);
+    font-size: 26px;
+    margin: 0 0 16px;
+  }
+  .courtroom-stage p{
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: rgba(237,230,214,0.85);
+    max-width: 560px;
+    margin: 0 0 20px;
+  }
+  .stage-actors{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .actor-pill{
+    font-size: 12px;
+    padding: 6px 13px;
+    border-radius: 20px;
+    border: 1px solid rgba(237,230,214,0.25);
+    color: rgba(237,230,214,0.8);
+  }
+
+  .stage-controls{
+    position:absolute;
+    bottom: 28px; right: 36px;
+    display:flex;
+    gap: 10px;
+  }
+  .nav-btn{
+    background: rgba(237,230,214,0.1);
+    border: 1px solid rgba(237,230,214,0.25);
+    color: var(--avorio);
+    font-size: 13px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor:pointer;
+    font-family: var(--sans);
+  }
+  .nav-btn:hover{ background: rgba(237,230,214,0.18); }
+  .nav-btn:disabled{ opacity:0.3; cursor:default; }
+
+  /* ============ COMPETENZE ============ */
+  .comp-grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .comp-col h4{
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--notte);
+    margin: 0 0 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(11,31,58,0.15);
+  }
+  .comp-col ul{ list-style:none; margin:0; padding:0; }
+  .comp-col li{
+    font-size: 13.5px;
+    color: #444;
+    padding: 8px 0;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .comp-col li::before{
+    content:"";
+    width:6px; height:6px;
+    border-radius:50%;
+    background: var(--oro);
+    margin-top:6px;
+    flex-shrink:0;
+  }
+
+  .closing-strip{
+    background: var(--notte);
+    color: rgba(237,230,214,0.6);
+    text-align:center;
+    padding: 26px;
+    font-size: 12.5px;
+    letter-spacing:0.05em;
+  }
+
+  /* ============ responsive ============ */
+  @media (max-width: 880px){
+    .hero-grid{ grid-template-columns: 1fr; }
+    .seal-wrap{ order:-1; }
+    .seal{ width:160px; height:160px; }
+    h1.title{ font-size: 32px; }
+    .obj-grid{ grid-template-columns: 1fr 1fr; }
+    .ruoli-grid{ grid-template-columns: 1fr; }
+    .comp-grid{ grid-template-columns: 1fr; }
+    .fase-detail.active{ grid-template-columns: 1fr; }
+    .courtroom{ grid-template-columns: 1fr; }
+    .timeline-rail{ flex-wrap:wrap; }
+    .rail-stop{ flex: 1 1 45%; }
+    .section{ padding: 48px 6vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="mainnav">
+  <span class="brand">Giustizia in Aula</span>
+  <button data-panel="p-progetto" class="active">Il progetto</button>
+  <button data-panel="p-fasi">Le fasi</button>
+  <button data-panel="p-ruoli">I ruoli</button>
+  <button data-panel="p-dibattimento">Il dibattimento</button>
+  <button data-panel="p-competenze">Cosa abbiamo imparato</button>
+</nav>
+
+<!-- ================= PANEL: IL PROGETTO ================= -->
+<section class="panel active" id="p-progetto">
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>PCTO · A.S. 2025–2026 · Liceo Classico</div>
+        <h1 class="title">Percorsi di legalità e tutela.<br><em>«Giustizia in Aula»</em></h1>
+        <p class="lede">Un percorso di 30 ore che porta un'aula di scuola dentro un'aula di tribunale: dalla teoria dei principi costituzionali alla simulazione integrale di un dibattimento penale, davanti a una vera Corte.</p>
+        <div class="hero-stats">
+          <div class="stat-block">
+            <div class="stat-num">30</div>
+            <div class="stat-label">Ore di percorso</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Fasi operative</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">7</div>
+            <div class="stat-label">Tappe del dibattimento</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-num">3</div>
+            <div class="stat-label">Classi coinvolte</div>
+          </div>
+        </div>
+      </div>
+      <div class="seal-wrap">
+        <svg class="seal" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="96" fill="none" stroke="#D8BD7F" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="100" cy="100" r="84" fill="none" stroke="#D8BD7F" stroke-width="1" opacity="0.35"/>
+          <!-- scales of justice, simplified -->
+          <line x1="100" y1="48" x2="100" y2="140" stroke="#D8BD7F" stroke-width="2.5"/>
+          <line x1="58" y1="68" x2="142" y2="68" stroke="#D8BD7F" stroke-width="2.5"/>
+          <line x1="58" y1="68" x2="44" y2="98" stroke="#D8BD7F" stroke-width="1.5"/>
+          <line x1="58" y1="68" x2="72" y2="98" stroke="#D8BD7F" stroke-width="1.5"/>
+          <path d="M44 98 a 14 10 0 0 0 28 0 Z" fill="none" stroke="#D8BD7F" stroke-width="1.5"/>
+          <line x1="142" y1="68" x2="128" y2="98" stroke="#D8BD7F" stroke-width="1.5"/>
+          <line x1="142" y1="68" x2="156" y2="98" stroke="#D8BD7F" stroke-width="1.5"/>
+          <path d="M128 98 a 14 10 0 0 0 28 0 Z" fill="none" stroke="#D8BD7F" stroke-width="1.5"/>
+          <path d="M82 140 h36 l-6 14 h-24 Z" fill="#D8BD7F" opacity="0.85"/>
+          <text x="100" y="170" text-anchor="middle" font-family="Cambria, Georgia, serif" font-size="11" fill="#D8BD7F" letter-spacing="2">CORTE PENALE</text>
+          <text x="100" y="183" text-anchor="middle" font-family="Cambria, Georgia, serif" font-size="9" fill="#D8BD7F" letter-spacing="1.5" opacity="0.7">VALLO DELLA LUCANIA</text>
+        </svg>
+      </div>
+    </div>
+    <div class="scroll-cue">Esplora il percorso usando il menu in alto ↑</div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-eyebrow">Obiettivi del percorso</div>
+      <h2 class="section-title">Perché un liceo classico entra in tribunale</h2>
+      <p class="section-sub">Il progetto unisce la riflessione teorica sulla legalità a un'esperienza pratica reale, costruita insieme alla Camera Penale e al Consiglio dell'Ordine degli Avvocati di Vallo della Lucania.</p>
+    </div>
+    <div class="obj-grid">
+      <div class="obj-card">
+        <div class="obj-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#D8BD7F" stroke-width="2"><path d="M12 2 L20 6 V11 C20 16 16.5 20 12 22 C7.5 20 4 16 4 11 V6 Z"/></svg></div>
+        <h4>Cultura della legalità</h4>
+        <p>Promuovere la responsabilità civica come fondamento della convivenza, oltre la semplice nozione di regola.</p>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#D8BD7F" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5"/></svg></div>
+        <h4>Il processo penale</h4>
+        <p>Capire davvero come funziona: dalle indagini al dibattimento, non come argomento di studio ma come meccanismo vissuto.</p>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#D8BD7F" stroke-width="2"><path d="M12 20c4-2 7-5 7-10V5l-7-3-7 3v5c0 5 3 8 7 10Z"/></svg></div>
+        <h4>Competenze trasversali</h4>
+        <p>Argomentazione, lavoro di gruppo, pensiero critico: capacità che servono ben oltre l'aula di tribunale.</p>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#D8BD7F" stroke-width="2"><circle cx="12" cy="8" r="3"/><path d="M5 21c0-4 3-6 7-6s7 2 7 6"/></svg></div>
+        <h4>Professioni giuridiche</h4>
+        <p>Avvicinare gli studenti al mondo giudiziario, con avvocati e magistrati come tutor diretti dell'esperienza.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PANEL: LE FASI ================= -->
+<section class="panel" id="p-fasi">
+  <div class="section on-carta">
+    <div class="section-head">
+      <div class="section-eyebrow">Struttura del percorso · 30 ore</div>
+      <h2 class="section-title">Tre fasi, dalla teoria all'aula vera</h2>
+      <p class="section-sub">Clicca su una fase per vedere cosa abbiamo fatto concretamente.</p>
+    </div>
+
+    <div class="timeline-rail" id="rail">
+      <button class="rail-stop active" data-fase="1">
+        <span class="rn">01</span>
+        <span class="rt">Formazione teorica</span>
+        <span class="rh">5 ore</span>
+      </button>
+      <button class="rail-stop" data-fase="2">
+        <span class="rn">02</span>
+        <span class="rt">Laboratori e preparazione</span>
+        <span class="rh">15 ore</span>
+      </button>
+      <button class="rail-stop" data-fase="3">
+        <span class="rn">03</span>
+        <span class="rt">Simulazione in tribunale</span>
+        <span class="rh">10 ore · evento finale</span>
+      </button>
+    </div>
+
+    <div class="fase-detail active" id="fase-1">
+      <div>
+        <div class="fase-meta">Fase 1 · Introduzione alla legalità</div>
+        <h3>Costruire le basi prima di entrare in aula</h3>
+        <ul>
+          <li><strong>Concetto di legalità e giustizia</strong> — la legalità è il rispetto delle norme; la giustizia non sempre coincide con essa. Da qui nasce il ruolo del processo penale come garanzia di un accertamento equo.</li>
+          <li><strong>Principi costituzionali</strong> — analisi degli articoli 2, 3, 24, 25, 27 e 111 della Costituzione: diritti inviolabili, uguaglianza, diritto alla difesa, presunzione di innocenza, giusto processo.</li>
+          <li><strong>Dibattito guidato su casi reali</strong> — confronto su situazioni concrete, esplorando i diversi punti di vista (accusa, difesa, giudice).</li>
+        </ul>
+      </div>
+      <div class="fase-side">
+        <div class="fl">Cosa resta di questa fase</div>
+        <p>Una base concettuale solida: senza capire perché un processo è strutturato in un certo modo, la simulazione successiva rischia di restare un gioco di ruolo vuoto.</p>
+        <div class="fl">Metodologie</div>
+        <div class="chiplist">
+          <span class="chip">Lezione dialogata</span>
+          <span class="chip">Dibattito guidato</span>
+          <span class="chip">Analisi di casi reali</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fase-detail" id="fase-2">
+      <div>
+        <div class="fase-meta">Fase 2 · Dalla teoria al caso simulato</div>
+        <h3>Costruire il processo da dentro</h3>
+        <ul>
+          <li><strong>Struttura del processo penale</strong> — differenza tra fase delle indagini, udienza preliminare e dibattimento; i ruoli di Pubblico Ministero, avvocato difensore e giudice.</li>
+          <li><strong>Divisione in gruppi</strong> — la classe si organizza in Accusa (PM), Difesa e Collegio giudicante.</li>
+          <li><strong>Preparazione sul caso simulato</strong> — analisi delle prove, costruzione della strategia accusatoria e difensiva, redazione di arringa e memoria difensiva.</li>
+          <li><strong>Simulazione guidata in classe</strong> — prime prove di esame e controesame, obiezioni, simulazioni parziali prima del giorno vero.</li>
+        </ul>
+      </div>
+      <div class="fase-side">
+        <div class="fl">Cosa resta di questa fase</div>
+        <p>È la fase più lunga (15 ore) perché è quella in cui si impara facendo: scrivere un'arringa è diverso da leggerne una, e lo stesso vale per condurre un controesame.</p>
+        <div class="fl">Metodologie</div>
+        <div class="chiplist">
+          <span class="chip">Role playing</span>
+          <span class="chip">Cooperative learning</span>
+          <span class="chip">Problem based learning</span>
+          <span class="chip">Didattica laboratoriale</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fase-detail" id="fase-3">
+      <div>
+        <div class="fase-meta">Fase 3 · Evento finale</div>
+        <h3>Il giorno in tribunale</h3>
+        <ul>
+          <li><strong>Svolgimento in una vera aula di tribunale</strong>, non in classe: stessa scenografia, stesso peso simbolico di un dibattimento reale.</li>
+          <li><strong>Struttura completa del dibattimento</strong> seguita passo dopo passo, dall'apertura dell'udienza alla lettura della sentenza.</li>
+          <li><strong>Presenza di professionisti reali</strong> del mondo giudiziario come osservatori e tutor, tra cui l'Avv. Agostino Bellucci.</li>
+        </ul>
+      </div>
+      <div class="fase-side">
+        <div class="fl">Cosa resta di questa fase</div>
+        <p>È il momento in cui la teoria della Fase 1 e la preparazione della Fase 2 si incontrano sotto pressione reale — con un pubblico, un'aula vera, un esito da costruire insieme.</p>
+        <div class="fl">Vedi anche</div>
+        <div class="chiplist">
+          <span class="chip">→ Sezione "Il dibattimento"</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PANEL: I RUOLI ================= -->
+<section class="panel" id="p-ruoli">
+  <div class="section on-notte">
+    <div class="section-head">
+      <div class="section-eyebrow">Chi siede in aula</div>
+      <h2 class="section-title">Tre ruoli, tre modi di leggere lo stesso caso</h2>
+      <p class="section-sub">Stesso fascicolo, stesse prove — ma accusa, difesa e giudice se lo trovano davanti con obiettivi completamente diversi. Clicca su un ruolo per aprirlo.</p>
+    </div>
+
+    <div class="ruoli-grid" id="ruoli">
+      <button class="ruolo-card" data-ruolo="accusa">
+        <span class="ruolo-tag tag-accusa">Pubblico Ministero</span>
+        <h4>Accusa</h4>
+        <p class="short">Costruisce la strategia accusatoria a partire dalle prove e sostiene il capo d'imputazione davanti alla Corte.</p>
+        <div class="full">
+          <ul>
+            <li>Analizza le prove a sostegno dell'accusa</li>
+            <li>Costruisce la strategia accusatoria</li>
+            <li>Conduce l'esame dei testimoni</li>
+            <li>Redige e pronuncia l'arringa dell'accusa</li>
+          </ul>
+        </div>
+        <div class="ruolo-expand-hint">Tocca per i dettagli</div>
+      </button>
+
+      <button class="ruolo-card" data-ruolo="difesa">
+        <span class="ruolo-tag tag-difesa">Avvocato difensore</span>
+        <h4>Difesa</h4>
+        <p class="short">Tutela la posizione dell'imputato, contesta le prove a carico e costruisce una linea difensiva coerente.</p>
+        <div class="full">
+          <ul>
+            <li>Analizza le prove a favore dell'imputato</li>
+            <li>Costruisce la strategia difensiva</li>
+            <li>Conduce il controesame dei testimoni</li>
+            <li>Redige la memoria difensiva e pronuncia l'arringa della difesa</li>
+          </ul>
+        </div>
+        <div class="ruolo-expand-hint">Tocca per i dettagli</div>
+      </button>
+
+      <button class="ruolo-card" data-ruolo="giudice">
+        <span class="ruolo-tag tag-giudice">Collegio giudicante</span>
+        <h4>Giudice</h4>
+        <p class="short">Garantisce il rispetto delle regole del dibattimento e, alla fine, decide: si ritira in camera di consiglio e legge la sentenza.</p>
+        <div class="full">
+          <ul>
+            <li>Dirige l'udienza e ne garantisce la correttezza</li>
+            <li>Valuta le argomentazioni di accusa e difesa</li>
+            <li>Si riunisce in camera di consiglio</li>
+            <li>Legge la sentenza conclusiva</li>
+          </ul>
+        </div>
+        <div class="ruolo-expand-hint">Tocca per i dettagli</div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PANEL: IL DIBATTIMENTO (simulatore) ================= -->
+<section class="panel" id="p-dibattimento">
+  <div class="section on-carta">
+    <div class="section-head">
+      <div class="section-eyebrow">Simulatore · Fase 3</div>
+      <h2 class="section-title">Le 7 tappe del dibattimento, passo dopo passo</h2>
+      <p class="section-sub">Questa è la sequenza reale seguita il giorno della simulazione finale in tribunale. Scegli una tappa dalla lista o usa "Avanti".</p>
+    </div>
+
+    <div class="courtroom">
+      <div class="step-list" id="steplist"></div>
+
+      <div class="courtroom-stage" id="stage">
+        <!-- popolato via JS -->
+        <div class="stage-controls">
+          <button class="nav-btn" id="prevBtn">← Prima</button>
+          <button class="nav-btn" id="nextBtn">Dopo →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PANEL: COMPETENZE ================= -->
+<section class="panel" id="p-competenze">
+  <div class="section on-carta">
+    <div class="section-head">
+      <div class="section-eyebrow">Cosa portiamo a casa</div>
+      <h2 class="section-title">Competenze acquisite</h2>
+      <p class="section-sub">Valutate attraverso partecipazione attiva, capacità argomentativa, uso del linguaggio giuridico e collaborazione nel gruppo — con rubrica di valutazione, autovalutazione e osservazione di docente e tutor.</p>
+    </div>
+    <div class="comp-grid">
+      <div class="comp-col">
+        <h4>Disciplinari</h4>
+        <ul>
+          <li>Comprensione della struttura del processo penale</li>
+          <li>Conoscenza dei ruoli: giudice, PM, avvocato, imputato, testimoni</li>
+        </ul>
+      </div>
+      <div class="comp-col">
+        <h4>Trasversali</h4>
+        <ul>
+          <li>Public speaking</li>
+          <li>Capacità argomentativa</li>
+          <li>Problem solving</li>
+          <li>Lavoro cooperativo</li>
+        </ul>
+      </div>
+      <div class="comp-col">
+        <h4>Civiche</h4>
+        <ul>
+          <li>Consapevolezza dei diritti e dei doveri</li>
+          <li>Educazione alla legalità</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="closing-strip">
+    Istituto di Istruzione Superiore «Parmenide» — Vallo della Lucania (SA) · PCTO A.S. 2025/2026 · Liceo Classico, Classe III B
+  </div>
+</section>
+
+<script>
+(function(){
+  // ---------- NAV ----------
+  var navButtons = document.querySelectorAll('#mainnav button');
+  var panels = document.querySelectorAll('.panel');
+  navButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      navButtons.forEach(function(b){ b.classList.remove('active'); });
+      panels.forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  // ---------- FASI rail ----------
+  var rail = document.querySelectorAll('.rail-stop');
+  var faseDetails = document.querySelectorAll('.fase-detail');
+  rail.forEach(function(stop){
+    stop.addEventListener('click', function(){
+      rail.forEach(function(s){ s.classList.remove('active'); });
+      faseDetails.forEach(function(f){ f.classList.remove('active'); });
+      stop.classList.add('active');
+      document.getElementById('fase-' + stop.dataset.fase).classList.add('active');
+    });
+  });
+
+  // ---------- RUOLI cards ----------
+  var ruoloCards = document.querySelectorAll('.ruolo-card');
+  ruoloCards.forEach(function(card){
+    card.addEventListener('click', function(){
+      var wasOpen = card.classList.contains('open');
+      ruoloCards.forEach(function(c){ c.classList.remove('open'); });
+      if(!wasOpen){ card.classList.add('open'); }
+    });
+  });
+
+  // ---------- DIBATTIMENTO simulator ----------
+  var steps = [
+    {
+      label: "Apertura dell'udienza",
+      eyebrow: "Tappa 1 · 7",
+      text: "Il giudice dichiara aperta l'udienza. L'aula prende posto: accusa e difesa ai rispettivi banchi, il pubblico in attesa. Da questo momento ogni intervento segue regole precise.",
+      actors: ["Giudice", "Cancelliere", "Pubblico"]
+    },
+    {
+      label: "Lettura del capo d'imputazione",
+      eyebrow: "Tappa 2 · 7",
+      text: "Viene letto formalmente di cosa è accusato l'imputato. È il punto di partenza condiviso da cui accusa e difesa costruiranno argomentazioni opposte.",
+      actors: ["Pubblico Ministero", "Imputato"]
+    },
+    {
+      label: "Esame e controesame",
+      eyebrow: "Tappa 3 · 7",
+      text: "Il PM interroga i propri testimoni (esame), la difesa li contro-interroga (controesame) per testarne la coerenza. È il momento in cui le prove si misurano sul campo.",
+      actors: ["Pubblico Ministero", "Avvocato difensore", "Testimoni"]
+    },
+    {
+      label: "Arringa dell'accusa",
+      eyebrow: "Tappa 4 · 7",
+      text: "Il PM ricompone le prove raccolte in un'unica linea narrativa e chiede alla Corte di riconoscere la colpevolezza dell'imputato.",
+      actors: ["Pubblico Ministero"]
+    },
+    {
+      label: "Arringa della difesa",
+      eyebrow: "Tappa 5 · 7",
+      text: "L'avvocato difensore risponde punto su punto, evidenzia le contraddizioni dell'accusa e richiama il principio di presunzione di innocenza.",
+      actors: ["Avvocato difensore"]
+    },
+    {
+      label: "Camera di consiglio",
+      eyebrow: "Tappa 6 · 7",
+      text: "I giudici si ritirano a deliberare lontano da accusa, difesa e pubblico. È la fase silenziosa e invisibile in cui si forma la decisione.",
+      actors: ["Collegio giudicante"]
+    },
+    {
+      label: "Lettura della sentenza",
+      eyebrow: "Tappa 7 · 7",
+      text: "Il giudice legge la decisione finale davanti a tutti i presenti. Il dibattimento si chiude nel momento in cui la teoria della Fase 1 diventa, finalmente, un verdetto.",
+      actors: ["Giudice", "Tutti i presenti"]
+    }
+  ];
+
+  var current = 0;
+  var stepList = document.getElementById('steplist');
+  var stage = document.getElementById('stage');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+
+  function renderList(){
+    stepList.innerHTML = '';
+    steps.forEach(function(s, i){
+      var el = document.createElement('button');
+      el.className = 'step-item' + (i === current ? ' active' : '');
+      el.innerHTML = '<span class="step-num">' + (i+1) + '</span><span class="step-label">' + s.label + '</span>';
+      el.addEventListener('click', function(){ current = i; render(); });
+      stepList.appendChild(el);
+    });
+  }
+
+  function renderStage(){
+    var s = steps[current];
+    var actorsHtml = s.actors.map(function(a){ return '<span class="actor-pill">' + a + '</span>'; }).join('');
+    // keep controls, replace the rest
+    var controls = stage.querySelector('.stage-controls');
+    stage.innerHTML = ''
+      + '<div class="stage-eyebrow">' + s.eyebrow + '</div>'
+      + '<h3>' + s.label + '</h3>'
+      + '<p>' + s.text + '</p>'
+      + '<div class="stage-actors">' + actorsHtml + '</div>';
+    stage.appendChild(controls);
+    prevBtn.disabled = (current === 0);
+    nextBtn.disabled = (current === steps.length - 1);
+  }
+
+  function render(){
+    renderList();
+    renderStage();
+  }
+
+  prevBtn.addEventListener('click', function(){ if(current > 0){ current--; render(); } });
+  nextBtn.addEventListener('click', function(){ if(current < steps.length - 1){ current++; render(); } });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
