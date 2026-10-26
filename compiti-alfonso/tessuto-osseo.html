@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Il tessuto osseo – video animato</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#16313a;--ch:#f2efe6;--y:#f6d365;--p:#f4a6b8;--b:#8fd3f4;--g:#a8e6a1;--o:#f7a35c;--v:#c9a7f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#16313a}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ch);font-family:'Patrick Hand','Segoe Print',cursive;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:10px}
+#stage{width:min(100%,900px);aspect-ratio:2/1;border:6px solid #8a6a43;border-radius:8px;background:#1b3d47;position:relative;overflow:hidden}
+.sc{position:absolute;inset:0;display:none}.sc.act{display:block}
+svg{width:100%;height:100%}
+svg text{fill:var(--ch);font-family:inherit;font-size:21px}
+.big{font-size:40px!important;fill:var(--y)!important}
+.k{fill:none;stroke:var(--ch);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.s{opacity:0;transition:opacity .9s}.s.on{opacity:1}
+.d{stroke-dasharray:1000;stroke-dashoffset:1000;transition:opacity .3s,stroke-dashoffset 1.8s ease}.d.on{stroke-dashoffset:0}
+#cap{width:min(100%,900px);min-height:3.4em;font-size:clamp(18px,3.2vw,26px);line-height:1.3;text-align:center;color:var(--ch)}
+#ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center}
+button{font:inherit;font-size:20px;background:#27505c;color:var(--ch);border:2px solid #5d8791;border-radius:8px;padding:4px 14px;cursor:pointer}
+button:focus-visible{outline:3px solid var(--y)}
+.dot{width:14px;height:14px;padding:0;border-radius:50%}.dot.act{background:var(--y);border-color:var(--y)}
+@media (prefers-reduced-motion:reduce){.s,.d{transition:none}}
+</style></head><body>
+<div id="stage">
+
+<!-- SCENA 1 -->
+<div class="sc" data-dur="12000"><svg viewBox="0 0 800 400">
+<text class="s big" data-d="0" x="400" y="55" text-anchor="middle">Il tessuto osseo</text>
+<rect class="s d k" data-d="800" data-c="Lo scheletro non è fatto solo di osso: ha due tipi di tessuto." x="300" y="85" width="200" height="55" rx="10" stroke="#f6d365" pathLength="1000"/>
+<text class="s" data-d="1800" x="400" y="121" text-anchor="middle">SCHELETRO</text>
+<path class="s d k" data-d="2800" d="M400 140V165H180V200M400 165H620V200" pathLength="1000"/>
+<rect class="s d k" data-d="3800" data-c="Tessuto cartilagineo: flessibile e ricco di fibre di collagene. Alla nascita è quasi tutto lo scheletro." x="50" y="200" width="260" height="170" rx="12" stroke="#c9a7f0" pathLength="1000"/>
+<text class="s" data-d="4600" x="180" y="235" text-anchor="middle" style="fill:#c9a7f0">Cartilagineo</text>
+<text class="s" data-d="5200" x="180" y="275" text-anchor="middle">flessibile</text>
+<text class="s" data-d="5600" x="180" y="305" text-anchor="middle">ricco di collagene</text>
+<text class="s" data-d="6000" x="180" y="345" text-anchor="middle">quasi tutto alla nascita</text>
+<rect class="s d k" data-d="7000" data-c="Tessuto osseo: duro e resistente. Si forma con l’ossificazione e si divide in compatto e spugnoso." x="490" y="200" width="260" height="170" rx="12" stroke="#8fd3f4" pathLength="1000"/>
+<text class="s" data-d="7800" x="620" y="235" text-anchor="middle" style="fill:#8fd3f4">Osseo</text>
+<text class="s" data-d="8400" x="620" y="275" text-anchor="middle">duro e resistente</text>
+<text class="s" data-d="9000" x="620" y="305" text-anchor="middle">si forma con l’ossificazione</text>
+<text class="s" data-d="9800" x="620" y="345" text-anchor="middle">compatto + spugnoso</text>
+</svg></div>
+
+<!-- SCENA 2 -->
+<div class="sc" data-dur="16000"><svg viewBox="0 0 800 400">
+<defs><pattern id="pr" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="5" cy="5" r="3" fill="none" stroke="#a8e6a1" stroke-width="2"/><circle cx="11" cy="11" r="2" fill="none" stroke="#a8e6a1" stroke-width="2"/></pattern>
+<path id="bn" d="M285 110C285 80 240 90 240 60C240 20 420 20 420 60C420 90 375 80 375 110L375 300C375 330 420 320 420 350C420 390 240 390 240 350C240 320 285 330 285 300Z"/></defs>
+<use class="s d k" data-d="300" data-c="Tagliamo a metà un femore, un osso lungo. Vediamo cosa c’è dentro, dall’esterno all’interno." href="#bn"/>
+<use class="s d k" data-d="3000" data-c="Fuori c’è il periostio: la membrana sottile che avvolge l’osso." href="#bn" stroke="#f4a6b8" stroke-dasharray="8 6" transform="translate(330 205) scale(1.07) translate(-330 -205)" style="stroke-dasharray:8 6"/>
+<path class="s k" data-d="3200" d="M470 125L383 150" stroke="#f4a6b8"/><text class="s" data-d="3400" x="475" y="130" style="fill:#f4a6b8">periostio</text>
+<rect class="s" data-d="6000" data-c="Sotto c’è il tessuto osseo compatto: lo strato duro e denso." x="285" y="110" width="15" height="190" fill="#f7a35c" opacity=".8"/>
+<rect class="s" data-d="6000" x="360" y="110" width="15" height="190" fill="#f7a35c" opacity=".8"/>
+<path class="s k" data-d="6200" d="M470 195L368 200" stroke="#f7a35c"/><text class="s" data-d="6400" x="475" y="200" style="fill:#f7a35c">tessuto compatto</text>
+<ellipse class="s" data-d="9000" data-c="Più dentro c’è il tessuto spugnoso, pieno di pori. Tutte le ossa hanno sia compatto sia spugnoso." cx="330" cy="62" rx="72" ry="28" fill="url(#pr)"/>
+<ellipse class="s" data-d="9000" cx="330" cy="350" rx="72" ry="28" fill="url(#pr)"/>
+<path class="s k" data-d="9200" d="M470 60L405 62" stroke="#a8e6a1"/><text class="s" data-d="9400" x="475" y="66" style="fill:#a8e6a1">tessuto spugnoso</text>
+<rect class="s" data-d="12000" data-c="Al centro c’è la cavità midollare, che contiene il midollo." x="300" y="110" width="60" height="190" fill="#0d1f25"/>
+<path class="s k" data-d="12200" d="M470 270L335 250" stroke="#8fd3f4"/><text class="s" data-d="12400" x="475" y="276" style="fill:#8fd3f4">cavità midollare</text>
+<path class="s k" data-d="13500" data-c="Epifisi: le due estremità. Diafisi: la parte centrale lunga." d="M215 25H205V105H215M215 115H205V300H215M215 310H205V392H215"/>
+<text class="s" data-d="13700" x="195" y="70" text-anchor="end">epifisi</text>
+<text class="s" data-d="14000" x="195" y="212" text-anchor="end">diafisi</text>
+<text class="s" data-d="14300" x="195" y="355" text-anchor="end">epifisi</text>
+</svg></div>
+
+<!-- SCENA 3 -->
+<div class="sc" data-dur="14500"><svg viewBox="0 0 800 400">
+<path class="s d k" data-d="200" data-c="Il tessuto osseo è fatto di lamelle ossee: sottili strati sovrapposti." d="M200 40H600M200 62H600M200 84H600" pathLength="1000"/>
+<text class="s" data-d="700" x="620" y="68" style="fill:#f6d365">lamelle ossee</text>
+<g class="s" data-d="3000" data-c="I sali minerali rendono l’osso duro e resistente." fill="none" stroke="#8fd3f4" stroke-width="3"><path d="M110 170l22-22 22 22-22 22zM160 215l22-22 22 22-22 22zM85 225l22-22 22 22-22 22z"/></g>
+<text class="s" data-d="3300" x="140" y="300" text-anchor="middle" style="fill:#8fd3f4">sali minerali</text>
+<text class="s" data-d="3600" x="140" y="330" text-anchor="middle">= duro</text>
+<path class="s d k" data-d="5500" data-c="L’osseina è una sostanza organica: rende l’osso un po’ elastico." d="M290 190Q320 140 350 190T410 190T470 190" stroke="#f4a6b8" pathLength="1000"/>
+<text class="s" data-d="6200" x="380" y="300" text-anchor="middle" style="fill:#f4a6b8">osseina</text>
+<text class="s" data-d="6500" x="380" y="330" text-anchor="middle">= elastico</text>
+<g class="s" data-d="8500" data-c="Gli osteoblasti costruiscono l’osso. Poi diventano osteociti: le cellule dell’osso maturo.">
+<circle class="k" cx="590" cy="170" r="28" stroke="#a8e6a1"/><circle cx="590" cy="170" r="8" fill="#a8e6a1"/>
+<text x="590" y="130" text-anchor="middle" style="fill:#a8e6a1">osteoblasto</text></g>
+<path class="s k" data-d="10000" d="M590 205V240" stroke="#f6d365"/><path class="s k" data-d="10000" d="M580 232l10 12 10-12" stroke="#f6d365"/>
+<g class="s" data-d="10600"><ellipse class="k" cx="590" cy="275" rx="26" ry="16" stroke="#c9a7f0"/><circle cx="590" cy="275" r="6" fill="#c9a7f0"/></g>
+<text class="s" data-d="10800" x="590" y="325" text-anchor="middle" style="fill:#c9a7f0">osteocita</text>
+<text class="s" data-d="11200" x="590" y="353" text-anchor="middle" style="font-size:17px">cellula matura</text>
+</svg></div>
+
+<!-- SCENA 4 -->
+<div class="sc" data-dur="15500"><svg viewBox="0 0 800 400">
+<rect class="s d k" data-d="200" data-c="Tessuto compatto: denso, senza buchi visibili. È formato da tanti osteoni uniti." x="40" y="30" width="340" height="250" rx="10" stroke="#f7a35c" pathLength="1000"/>
+<g id="cmp" class="s" data-d="1500"></g>
+<text class="s" data-d="2500" x="210" y="320" text-anchor="middle" style="fill:#f7a35c">COMPATTO</text>
+<rect class="s d k" data-d="5000" data-c="Tessuto spugnoso: ricco di pori, come una spugna." x="420" y="30" width="340" height="250" rx="10" stroke="#a8e6a1" pathLength="1000"/>
+<g id="spg" class="s" data-d="6300"></g>
+<text class="s" data-d="7300" x="590" y="320" text-anchor="middle" style="fill:#a8e6a1">SPUGNOSO</text>
+<text class="s" data-d="9500" data-c="Il compatto sta in superficie e nella diafisi. Lo spugnoso sta all’interno e nelle epifisi." x="210" y="355" text-anchor="middle">superficie e diafisi</text>
+<text class="s" data-d="11500" x="590" y="355" text-anchor="middle">interno ed epifisi</text>
+</svg></div>
+
+<!-- SCENA 5 -->
+<div class="sc" data-dur="17000"><svg viewBox="0 0 800 400">
+<circle class="s d k" data-d="300" data-c="L’osteone è l’unità del tessuto compatto: un cilindro. Qui lo guardiamo dall’alto." cx="270" cy="205" r="145" stroke="#f7a35c" pathLength="1000"/>
+<circle class="s d k" data-d="1200" cx="270" cy="205" r="110" stroke="#f7a35c" pathLength="1000"/>
+<circle class="s d k" data-d="2000" cx="270" cy="205" r="75" stroke="#f7a35c" pathLength="1000"/>
+<circle class="s d k" data-d="2800" cx="270" cy="205" r="40" stroke="#f7a35c" pathLength="1000"/>
+<circle class="s" data-d="3600" data-c="Al centro c’è il canale: dentro passano nervi e vasi sanguigni, cioè arterie e vene." cx="270" cy="205" r="22" fill="#0d1f25"/>
+<circle class="s" data-d="4600" cx="258" cy="210" r="7" fill="#f4a6b8"/>
+<circle class="s" data-d="5000" cx="283" cy="210" r="7" fill="#8fd3f4"/>
+<circle class="s" data-d="5400" cx="270" cy="192" r="5" fill="#f6d365"/>
+<path class="s k" data-d="3800" d="M470 105L295 195" stroke="#ffffff" style="stroke-width:2"/><text class="s" data-d="3900" x="475" y="105">canale centrale</text>
+<text class="s" data-d="4800" x="475" y="140" style="font-size:18px"><tspan fill="#f4a6b8">arterie</tspan>, <tspan fill="#8fd3f4">vene</tspan>, <tspan fill="#f6d365">nervi</tspan></text>
+<path class="s k" data-d="7500" data-c="Attorno al canale ci sono strati concentrici di lamelle ossee, come gli anelli di un tronco." d="M470 200L370 215" stroke="#f7a35c" style="stroke-width:2"/><text class="s" data-d="7600" x="475" y="205" style="fill:#f7a35c">lamelle ossee</text>
+<text class="s" data-d="7900" x="475" y="232" style="font-size:18px">strati concentrici</text>
+<g id="ost" class="s" data-d="10500" data-c="Tra le lamelle ci sono gli osteociti. Tanti osteoni saldati insieme formano il tessuto compatto."></g>
+<path class="s k" data-d="10700" d="M470 310L335 270" stroke="#c9a7f0" style="stroke-width:2"/><text class="s" data-d="10800" x="475" y="315" style="fill:#c9a7f0">osteociti</text>
+</svg></div>
+
+<!-- SCENA 6 -->
+<div class="sc" data-dur="19000"><svg viewBox="0 0 800 400">
+<use class="s" data-d="300" data-c="Alla nascita quasi tutto lo scheletro è cartilagine. L’osso c’è solo in pochi nuclei." href="#bn" fill="#c9a7f0" transform="translate(130 20) scale(.45) translate(-330 -20)"/>
+<circle class="s" data-d="900" cx="130" cy="75" r="5" fill="#fff"/><circle class="s" data-d="1100" cx="130" cy="165" r="6" fill="#fff"/><circle class="s" data-d="1300" cx="130" cy="255" r="5" fill="#fff"/>
+<text class="s" data-d="1500" x="130" y="312" text-anchor="middle">Alla nascita</text>
+<path class="s k" data-d="3500" d="M215 160H300M285 148l15 12-15 12" stroke="#f6d365"/>
+<use class="s" data-d="4000" data-c="Crescendo, l’ossificazione trasforma la cartilagine in osso, partendo dai nuclei." href="#bn" fill="#c9a7f0" transform="translate(400 20) scale(.45) translate(-330 -20)"/>
+<rect class="s" data-d="4500" x="378" y="75" width="44" height="170" rx="14" fill="#f2efe6"/><rect class="s" data-d="5200" x="366" y="60" width="68" height="200" rx="24" fill="#f2efe6" opacity=".6"/>
+<text class="s" data-d="5800" x="400" y="312" text-anchor="middle">Crescendo</text>
+<path class="s k" data-d="7000" d="M485 160H570M555 148l15 12-15 12" stroke="#f6d365"/>
+<use class="s" data-d="7500" data-c="Nell’adulto l’osso ha preso il posto della cartilagine, che resta solo in alcune parti." href="#bn" fill="#f2efe6" transform="translate(670 20) scale(.45) translate(-330 -20)"/>
+<ellipse class="s" data-d="8000" cx="670" cy="38" rx="34" ry="10" fill="#c9a7f0"/><ellipse class="s" data-d="8000" cx="670" cy="262" rx="34" ry="10" fill="#c9a7f0"/>
+<text class="s" data-d="8400" x="670" y="312" text-anchor="middle">Adulto</text>
+<text class="s" data-d="10500" data-c="Cartilagine nell’adulto: naso, orecchio, costole, trachea, bronchi e superficie delle articolazioni." x="60" y="352" style="fill:#c9a7f0">resta cartilagine in:</text>
+<g class="s" data-d="11000" style="font-size:19px"><text x="270" y="352">naso</text></g>
+<g class="s" data-d="11800"><text x="330" y="352">orecchio</text></g>
+<g class="s" data-d="12600"><text x="425" y="352">costole</text></g>
+<g class="s" data-d="13400"><text x="510" y="352">trachea</text></g>
+<g class="s" data-d="14200"><text x="595" y="352">bronchi</text></g>
+<g class="s" data-d="15000"><text x="60" y="385" style="fill:#c9a7f0">e anche:</text><text x="160" y="385">rivestimento delle articolazioni (i capi viola)</text></g>
+</svg></div>
+
+<!-- SCENA 7 -->
+<div class="sc" data-dur="12000"><svg viewBox="0 0 800 400">
+<text class="s big" data-d="0" data-c="Ricapitolando." x="400" y="55" text-anchor="middle">Ricapitolando</text>
+<text class="s" data-d="1000" x="50" y="125" style="fill:#f6d365">Osso = compatto + spugnoso, in tutte le ossa</text>
+<text class="s" data-d="2600" x="50" y="190" style="fill:#f7a35c">Compatto: osteoni, superficie e diafisi</text>
+<text class="s" data-d="4200" x="50" y="255" style="fill:#a8e6a1">Spugnoso: pieno di pori, interno ed epifisi</text>
+<text class="s" data-d="5800" x="50" y="320" style="fill:#c9a7f0">Osteoblasti costruiscono, osteociti sono maturi</text>
+<text class="s" data-d="7400" x="50" y="375" style="fill:#8fd3f4">Ossificazione: la cartilagine diventa osso</text>
+</svg></div>
+</div>
+<div id="cap" aria-live="polite"></div>
+<div id="ctl"><button id="prev" aria-label="Scena precedente">◀</button><button id="pp" aria-label="Play o pausa">❚❚ Pausa</button><button id="next" aria-label="Scena successiva">▶</button><span id="dots"></span></div>
+<script>
+const NS='http://www.w3.org/2000/svg',E=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+// osteoni (compatto)
+const cmp=document.getElementById('cmp');
+for(let r=0;r<2;r++)for(let c=0;c<3;c++){const x=95+c*110,y=95+r*110;[40,24].forEach(R=>E('circle',{cx:x,cy:y,r:R,class:'k',stroke:'#f7a35c','stroke-width':2.5},cmp));E('circle',{cx:x,cy:y,r:8,fill:'#0d1f25'},cmp)}
+// spugnoso (trabecole)
+const spg=document.getElementById('spg');let seed=7;const rn=()=>(seed=(seed*9301+49297)%233280)/233280;
+const P=[];for(let r=0;r<4;r++){P.push([]);for(let c=0;c<5;c++)P[r].push([450+c*70+(rn()-.5)*34,55+r*65+(rn()-.5)*28])}
+for(let r=0;r<4;r++)for(let c=0;c<5;c++){const a=P[r][c];if(c<4)E('line',{x1:a[0],y1:a[1],x2:P[r][c+1][0],y2:P[r][c+1][1],class:'k',stroke:'#a8e6a1','stroke-width':3.5},spg);if(r<3)E('line',{x1:a[0],y1:a[1],x2:P[r+1][c][0],y2:P[r+1][c][1],class:'k',stroke:'#a8e6a1','stroke-width':3.5},spg);if(r<3&&c<4)E('line',{x1:a[0],y1:a[1],x2:P[r+1][c+1][0],y2:P[r+1][c+1][1],class:'k',stroke:'#a8e6a1','stroke-width':2},spg)}
+// osteociti nell'osteone
+const ost=document.getElementById('ost');
+[[93,40],[58,150],[128,200],[93,260],[58,330],[128,20],[93,110]].forEach(([R,a])=>{const t=a*Math.PI/180;E('ellipse',{cx:270+R*Math.cos(t),cy:205+R*Math.sin(t),rx:9,ry:5.5,fill:'#c9a7f0',transform:`rotate(${a+90} ${270+R*Math.cos(t)} ${205+R*Math.sin(t)})`},ost)});
+// player
+const sc=[...document.querySelectorAll('.sc')],cap=document.getElementById('cap'),pp=document.getElementById('pp'),dots=document.getElementById('dots');
+let cur=0,playing=true,T=[];
+sc.forEach((_,i)=>{const b=document.createElement('button');b.className='dot';b.setAttribute('aria-label','Scena '+(i+1));b.onclick=()=>{playing=true;show(i)};dots.appendChild(b)});
+const clr=()=>{T.forEach(clearTimeout);T=[]};
+function label(){pp.textContent=playing?'❚❚ Pausa':'▶ Avvia'}
+function show(i){clr();cur=i;sc.forEach((s,k)=>s.classList.toggle('act',k==i));[...dots.children].forEach((d,k)=>d.classList.toggle('act',k==i));
+ const s=sc[i];s.querySelectorAll('.s').forEach(e=>e.classList.remove('on'));cap.textContent='';label();
+ s.querySelectorAll('.s').forEach(e=>T.push(setTimeout(()=>{e.classList.add('on');if(e.dataset.c)cap.textContent=e.dataset.c},+e.dataset.d||0)));
+ if(playing)T.push(setTimeout(()=>{if(i<sc.length-1)show(i+1);else{playing=false;label()}},+s.dataset.dur))}
+function finish(){clr();const s=sc[cur];let last='';s.querySelectorAll('.s').forEach(e=>{e.classList.add('on');if(e.dataset.c)last=e.dataset.c});if(last)cap.textContent=last}
+pp.onclick=()=>{if(playing){playing=false;finish();label()}else{playing=true;show(cur<sc.length-1?cur+1:0)}};
+document.getElementById('prev').onclick=()=>show(Math.max(0,cur-1));
+document.getElementById('next').onclick=()=>show(Math.min(sc.length-1,cur+1));
+show(0);
+</script></body></html>
