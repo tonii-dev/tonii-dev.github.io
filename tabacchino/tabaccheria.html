@@ -117,7 +117,7 @@ dialog[open]{animation:dlgIn .2s ease-out}
 @keyframes bump{0%{transform:scale(1.28)}100%{transform:scale(1)}}
 @keyframes dlgIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style></head><body><div id="root"></div><script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><script>const {useState,useEffect,useRef}=React,html=htm.bind(React.createElement);
+</style></head><body><div id="root"></div><script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script><script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-database-compat.js"></script><script>const {useState,useEffect,useRef}=React,html=htm.bind(React.createElement);
 const _D=Date;let OFF=0,TEST=false;
 window.Date=class extends _D{constructor(...a){a.length?super(...a):super(_D.now()+OFF)}static now(){return _D.now()+OFF}};
 const tp=q=>q=="shop/main"?"shop/test":q.replace(/^sales\//,"sales/t-");
@@ -128,6 +128,21 @@ const CATS=["Sigarette","Tabacco","Gratta e vinci","Valori bollati","Ricariche",
 const P={receipt:"M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2zM8 8h8M8 12h8",package:"M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8",truck:"M1 6h13v10H1zM14 10h4l3 3v3h-7zM6 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z",chart:"M3 3v18h18M7 15v3M12 10v8M17 6v12",plus:"M12 5v14M5 12h14",minus:"M5 12h14",x:"M6 6l12 12M18 6L6 18",undo:"M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3",cash:"M2 6h20v12H2zM12 15a3 3 0 100-6 3 3 0 000 6z",card:"M2 5h20v14H2zM2 10h20",down:"M12 3v13M6 11l6 6 6-6M4 21h16",up:"M12 17V4M6 10l6-6 6 6M4 21h16",check:"M4 12l5 5L20 6"};
 const Ic=({n,s=20})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style=${{flex:"none",verticalAlign:"-4px"}}><path d=${P[n]}/></svg>`;
 let db=null;
+const FIREBASE_CONFIG={databaseURL:"https://gestionale-a66c8-default-rtdb.firebaseio.com",projectId:"gestionale-a66c8"};
+// Se la tua console mostra un URL diverso (es. ...europe-west1.firebasedatabase.app), cambia databaseURL qui sopra.
+const tmo=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error("timeout")),ms))]);
+async function fbInit(){
+ if(typeof firebase==="undefined")return null;
+ if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+ const r=firebase.database();
+ const ok=await new Promise(res=>{const c=r.ref(".info/connected"),t=setTimeout(()=>{c.off("value",h);res(false)},6000);
+  const h=c.on("value",sn=>{if(sn.val()===true){clearTimeout(t);c.off("value",h);res(true)}})});
+ if(!ok)return null;
+ const ref=(c,d)=>r.ref(c+"/"+d);
+ return{collection:c=>({doc:d=>({
+  get:async()=>{const sn=await tmo(ref(c,d).once("value"),8000);return{exists:sn.exists(),data:()=>sn.val()}},
+  set:o=>tmo(ref(c,d).set(JSON.parse(JSON.stringify(o))),8000),
+  onSnapshot:(cb,err)=>{const q=ref(c,d),h=q.on("value",sn=>cb({exists:sn.exists(),data:()=>sn.val()}),err);return()=>q.off("value",h)}})})}}
 async function ld(path,real){if(!real&&TEST)path=tp(path);try{if(db){const[c,d]=path.split("/");const s=await db.collection(c).doc(d).get();if(s.exists)return s.data()}}catch(e){}
  try{return JSON.parse(localStorage.getItem(path))}catch(e){return null}}
 async function sv(path,o){if(TEST)path=tp(path);try{localStorage.setItem(path,JSON.stringify(o))}catch(e){}
@@ -193,22 +208,24 @@ function ProdDlg({p,onSave,onDel,onClose}){
 
 function Remote(){
  const[L,setL]=useState(null),[sent,setSent]=useState(null),[msg,setMsg]=useState(""),[ok,setOk]=useState(null),[err,setErr]=useState(false);
- const sr=useRef(null);
- useEffect(()=>{let un=()=>{},iv;(async()=>{
-  try{if(!db&&window.claude)db=await claude.use("db")}catch(e){}
+ const sr=useRef(null),pcAt=useRef(0),[pcOn,setPcOn]=useState(false);
+ useEffect(()=>{let un=()=>{},un2=()=>{},iv,iv2,f0=false;(async()=>{
+  try{if(!db)db=await fbInit()}catch(e){}
   if(!db){setErr(true);return}
   un=db.collection("remote").doc("live").onSnapshot(sn=>{const d=sn.exists?sn.data():{seq:0,total:0,lines:[]};setL(d);
    const x=sr.current;if(x&&d.done&&d.done.id==x.id){sr.current=null;setSent(null);if(d.done.ok){setOk({m:x.m,total:d.done.total});setTimeout(()=>setOk(null),2600)}else setMsg("Il totale è cambiato: controlla e riprova.")}},()=>setErr(true));
   const ping=()=>db.collection("remote").doc("ping").set({t:Date.now()}).catch(()=>{});ping();iv=setInterval(ping,5000);
+  un2=db.collection("remote").doc("pcping").onSnapshot(()=>{if(!f0){f0=true;return}pcAt.current=Date.now()},()=>{});
+  iv2=setInterval(()=>setPcOn(pcAt.current>0&&Date.now()-pcAt.current<12000),3000);
   try{navigator.wakeLock&&navigator.wakeLock.request("screen").catch(()=>{})}catch(e){}})();
-  return()=>{un();clearInterval(iv)}},[]);
+  return()=>{un();un2();clearInterval(iv);clearInterval(iv2)}},[]);
  const n=L&&L.lines?L.lines.length:0;
  const send=m=>{if(!n||sr.current)return;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);sr.current={id,m};setSent({id,m});setMsg("");
   db.collection("remote").doc("cmd").set({id,m,seq:L.seq,total:L.total}).catch(()=>{sr.current=null;setSent(null);setMsg("Invio non riuscito. Riprova.")});
-  setTimeout(()=>{if(sr.current&&sr.current.id==id){sr.current=null;setSent(null);setMsg("Il PC non risponde. Controlla che il gestionale sia aperto.")}},7000)};
- if(err)return html`<div className="remote"><div className="rmsg">Impossibile collegarsi.<br/>Apri questo link da claude.ai, con lo stesso account usato sul PC.</div></div>`;
+  setTimeout(()=>{if(sr.current&&sr.current.id==id){sr.current=null;setSent(null);setMsg("Il PC non risponde. Controlla che il gestionale sia aperto.");db.collection("remote").doc("cmd").set(null).catch(()=>{})}},7000)};
+ if(err)return html`<div className="remote"><div className="rmsg">Impossibile collegarsi a Firebase.<br/>Controlla la connessione e che il link sia lo stesso del PC.</div></div>`;
  return html`<div className="remote">
-  <div className="rtop"><div className="mu">Totale da pagare</div><div className="rtot">${eur(L?L.total:0)}</div></div>
+  <div className="rtop"><div className="mu">Totale da pagare · ${pcOn?"● PC collegato":"○ PC non risponde"}</div><div className="rtot">${eur(L?L.total:0)}</div></div>
   <div className="rlist">${n?L.lines.map((l,i)=>html`<div className="rrow" key=${i}><span>${l.q}× ${l.n}</span><b>${eur(l.t)}</b></div>`):html`<div className="rempty mu">${L?"Nessuna vendita in corso":"Connessione…"}</div>`}
    ${msg&&html`<div className="rwarn">${msg}</div>`}</div>
   <div className="rbtns"><button className="rb cash" disabled=${!n||!!sent} onClick=${()=>send("cash")}><${Ic} n="cash" s=${48}/>${sent&&sent.m=="cash"?"Invio…":"Contanti"}</button>
@@ -222,9 +239,9 @@ function App(){
  const sc=useRef(),tt=useRef(),ready=useRef(false),confRef=useRef(()=>{}),live=useRef({seq:0}),doneRef=useRef(null),pushRef=useRef(()=>{}),pingAt=useRef(0),totRef=useRef(0),nRef=useRef(0),[dbOn,setDbOn]=useState(false),[remoteOn,setRemoteOn]=useState(false),[mode,setMode]=useState(null),[armed,setArmed]=useState(""),[code,setCode]=useState(""),[,setTick]=useState(0),[tdlg,setTdlg]=useState(false),[tlog,setTlog]=useState([]),[tmult,setTmult]=useState(1),[tsim,setTsim]=useState(true),[tauto,setTauto]=useState(true);
  const pf=id=>S.products.find(p=>p.id==id);
  const flash=t=>{setToast(t);clearTimeout(tt.current);tt.current=setTimeout(()=>setToast(""),1900)};
- const persist=ns=>{setS(ns);sv("shop/main",ns).then(ok=>!ok&&setSt("⚠ salvataggio online non riuscito"))};
- useEffect(()=>{(async()=>{try{if(window.claude)db=await claude.use("db")}catch(e){}
-  setDbOn(!!db);setSt(db?"Dati salvati online":"Dati salvati solo su questo browser");
+ const persist=ns=>{setS(ns);sv("shop/main",ns).then(ok=>!ok&&setSt("⚠ salvataggio su Firebase non riuscito"))};
+ useEffect(()=>{(async()=>{try{db=await fbInit()}catch(e){}
+  setDbOn(!!db);setSt(db?"Dati salvati su Firebase":"Dati salvati solo su questo browser");
   const m=await ld("shop/main");if(m)setS(s=>({...s,...m}));
   const o={};for(const k of monthKeys(13)){const s=await ld("sales/"+k);if(s)o[k]=s}setSALES(o);ready.current=true})()},[]);
  useEffect(()=>{if(tab=="cassa"&&!dlg&&sc.current)sc.current.focus()},[tab,dlg,cart.length]);
@@ -241,7 +258,8 @@ function App(){
    else{doneRef.current={id:c.id,ok:false};pushRef.current()}});
   const u2=db.collection("remote").doc("ping").onSnapshot(()=>{if(!pf0){pf0=true;return}pingAt.current=Date.now();setRemoteOn(true)});
   const iv=setInterval(()=>setRemoteOn(pingAt.current>0&&Date.now()-pingAt.current<12000),3000);
-  return()=>{u1();u2();clearInterval(iv)}},[dbOn]);
+  const hb=()=>db.collection("remote").doc("pcping").set({t:Date.now()}).catch(()=>{});hb();const ivh=setInterval(hb,5000);
+  return()=>{u1();u2();clearInterval(iv);clearInterval(ivh)}},[dbOn]);
  const addId=id=>setCart(c=>c.find(x=>x.id==id)?c.map(x=>x.id==id?{...x,q:x.q+1}:x):[...c,{id,q:1}]);
  const cq=(id,d)=>setCart(c=>c.map(x=>x.id==id?{...x,q:x.q+d}:x).filter(x=>x.q>0));
  const onScan=e=>{if(e.key!="Enter")return;const v=e.target.value.trim();e.target.value="";
@@ -308,7 +326,7 @@ function App(){
   enter:enterTest,exit:async()=>{await exitTest();setTdlg(false)},reset:resetTest,realNow:()=>{OFF=0;setTick(x=>x+1)},adv,jump,toDay:t=>{const n=(t-new Date().getDay()+7)%7;return n||7},
   sim:tsim,setSim:setTsim,auto:tauto,setAuto:setTauto,mult:tmult,setMult:setTmult,hist:genHist,wipe,initStock,zeroStock,regTest,arriveAll,toNota:()=>{setTab("ord");setTdlg(false)},nSug:sug.length,log:tlog,
   health:big?"Mese più pesante: "+big[0]+" · "+Math.round(big[1]/1024)+" KB (il limite per ogni documento è circa 256 KB).":"Nessuna vendita registrata."};
- const backup=async()=>{try{const dl=window.claude?await claude.use("downloads"):null;if(!dl)return flash("Download non disponibile");await dl.save({filename:"backup-tabaccheria-"+lt().slice(0,10)+".json",data:JSON.stringify({S,SALES})})}catch(e){}};
+ const backup=async()=>{try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({S,SALES})],{type:"application/json"}));a.download="backup-tabaccheria-"+lt().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}catch(e){flash("Backup non riuscito")}};
  const restore=async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(!o.S||!o.SALES)throw 0;
   setS({products:[],draft:{},orders:[],...o.S});setSALES(o.SALES);await sv("shop/main",o.S);for(const k in o.SALES)await sv("sales/"+k,o.SALES[k]);flash("Backup ripristinato")}catch(x){flash("File non valido")}};
 
@@ -335,7 +353,7 @@ function App(){
    <div className="row"><button className="b ok" id="conf" onClick=${conf} disabled=${!rows.length}><${Ic} n="check" s=${24}/> Conferma vendita</button>
    <button className="b g" onClick=${()=>setCart([])}>Svuota carrello</button><button className="b g" onClick=${undo}><${Ic} n="undo" s=${18}/> Annulla ultima vendita</button></div>
    <p className="mu" style=${{fontSize:13}}>Invio a campo vuoto conferma con il metodo selezionato. F1 e F2 confermano subito in contanti o con il POS.</p>
-   <p className="mu" style=${{fontSize:13}}>${remoteOn?"📱 Secondo schermo collegato.":"📱 Secondo schermo non collegato (facoltativo): apri lo stesso link su tablet o telefono e aggiungi #cassa-remota alla fine."}</p>
+   <p className="mu" style=${{fontSize:13}}>${remoteOn?"📱 Secondo schermo collegato.":"📱 Secondo schermo non collegato (facoltativo): apri lo stesso indirizzo su tablet o telefono e aggiungi #cassa-remota alla fine."}</p>
    <h2 style=${{marginTop:18}}>Ultime vendite</h2>
    ${A.slice(-5).reverse().map(s=>html`<div key=${s.t} style=${{padding:"6px 0",borderTop:"1px solid #ffffff1f"}}><b>${s.t.slice(11,16)}</b> ${s.pay=="cash"?"Contanti":"POS"} · ${eur(s.total)}<br/><small className="mu">${s.lines.map(l=>l.q+"× "+l.n).join(", ")}</small></div>`)}
    ${!A.length&&html`<span className="mu">Ancora nessuna vendita.</span>`}</div></div></section>`;
