@@ -150,7 +150,7 @@ async function sv(path,o){if(TEST)path=tp(path);try{localStorage.setItem(path,JS
 const monthKeys=n=>[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);return lt(d).slice(0,7)});
 
 const WD=[.8,.9,.95,.95,1.05,1.3,1.25],hs=id=>[...String(id)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
-const baseOf=p=>Math.max(3,(p.min||15)*(0.45+(hs(p.id)%100)/100));
+const baseOf=p=>Math.max(3,(p.min||3)*(0.45+(hs(p.id)%100)/100));
 function simDay(S,SALES,day,mult,touch){
  const wd=WD[day.getDay()],units=[];
  S.products.filter(p=>p.cat=="Sigarette").forEach(p=>{const k=p.ppst||10;let q=Math.max(0,Math.round(baseOf(p)*wd*mult*(0.8+Math.random()*0.4)));
@@ -158,7 +158,7 @@ function simDay(S,SALES,day,mult,touch){
   for(let i=0;i<q;i++)units.push(p)});
  units.sort(()=>Math.random()-.5);
  for(let i=0;i<units.length;){const b=units.slice(i,i+1+Math.floor(Math.random()*3));i+=b.length;const m={};
-  b.forEach(p=>{m[p.id]=m[p.id]||{id:p.id,n:p.name,q:0,p:p.price,c:p.cost};m[p.id].q++});
+  b.forEach(p=>{m[p.id]=m[p.id]||{id:p.id,n:p.name,q:0,p:p.price,c:(p.cat=="Sigarette"?p.cost*0.02:p.cost)};m[p.id].q++});
   const L=Object.values(m),d=new Date(day.getFullYear(),day.getMonth(),day.getDate(),8+Math.floor(Math.random()*12),Math.floor(Math.random()*60),Math.floor(Math.random()*60)),t=lt(d),k=t.slice(0,7);
   (SALES[k]=SALES[k]||{sales:[]}).sales.push({t,pay:Math.random()<.45?"cash":"pos",total:L.reduce((a,l)=>a+l.p*l.q,0),cost:L.reduce((a,l)=>a+l.c*l.q,0),lines:L})}
  if(touch)S.products.forEach(p=>{if(p.cat=="Sigarette"&&p.min>0)while(p.stock<=p.min&&(p.dep||0)>0){p.dep--;p.stock+=(p.ppst||10)}})}
@@ -194,15 +194,15 @@ function ChartBox({cfg}){const r=useRef(),c=useRef();
  return html`<canvas ref=${r}/>`}
 
 function ProdDlg({p,onSave,onDel,onClose}){
- const ref=useRef(),[sure,setSure]=useState(false);const[f,setF]=useState({barcode:"",name:"",cat:"Sigarette",price:"",cost:"",min:"",stock:"",dep:"",ppst:10,ppc:20,...p});
+ const ref=useRef(),[sure,setSure]=useState(false);const[f,setF]=useState({barcode:"",name:"",cat:"Sigarette",price:"",cost:"",min:3,stock:"",dep:"",ppst:10,...p,min:p.min??3});
  useEffect(()=>{ref.current.showModal()},[]);
  const fld=(k,l,t="text",w)=>html`<label className=${w?"w":""}>${l}<input type=${t} step=${t=="number"?"0.01":undefined} value=${f[k]} autoFocus=${k==(p.barcode?"name":"barcode")} onChange=${e=>setF({...f,[k]:e.target.value})}/></label>`;
- const save=()=>{if(!f.name.trim())return;onSave({...f,barcode:f.barcode.trim(),name:f.name.trim(),price:+f.price||0,cost:+f.cost||0,min:+f.min||0,stock:+f.stock||0,dep:+f.dep||0,ppst:+f.ppst||10,ppc:+f.ppc||20})};
+ const save=()=>{if(!f.name.trim())return;onSave({...f,barcode:f.barcode.trim(),name:f.name.trim(),price:+f.price||0,cost:+f.cost||0,min:+f.min|| (f.cat=="Sigarette"?3:0),stock:+f.stock||0,dep:+f.dep||0,ppst:+f.ppst||10,costPerKg:f.cat=="Sigarette"})};
  return html`<dialog ref=${ref} onClose=${onClose} onKeyDown=${e=>e.key=="Enter"&&e.target.tagName=="INPUT"&&save()}>
   <h2>${p.id?"Modifica prodotto":"Nuovo prodotto"}</h2><div className="f">
   ${fld("barcode","Codice a barre","text",1)}${fld("name","Nome","text",1)}
   <label>Categoria<select value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value})}>${CATS.map(c=>html`<option key=${c}>${c}</option>`)}</select></label>
-  ${fld("price","Prezzo vendita","number")}${fld("cost","Costo acquisto","number")}${f.cat=="Sigarette"?html`${fld("min","Soglia banco (pacchetti)","number")}${fld("stock","Pacchetti al banco","number")}${fld("dep","Stecche in deposito","number")}${fld("ppst","Pacchetti per stecca","number")}${fld("ppc","Sigarette per pacchetto","number")}`:html`${fld("min","Scorta minima","number")}${fld("stock","Giacenza","number")}`}</div>
+  ${fld("price","Prezzo vendita","number")}${fld("cost",f.cat=="Sigarette"?"Costo acquisto (€/kg)":"Costo acquisto","number")}${f.cat=="Sigarette"?html`${fld("min","Soglia minima al banco (pacchetti)","number")}${fld("stock","Pacchetti al banco","number")}${fld("dep","Stecche in deposito","number")}${fld("ppst","Pacchetti per stecca","number")}`:html`${fld("min","Scorta minima","number")}${fld("stock","Giacenza","number")}`}</div>
   <div className="row" style=${{marginTop:16}}><button className="b" onClick=${save}>Salva</button><button className="b g" onClick=${()=>ref.current.close()}>Annulla</button>
   ${p.id&&html`<button className="b bad" style=${{marginLeft:"auto"}} onClick=${()=>sure?onDel():(setSure(true),setTimeout(()=>setSure(false),3500))}>${sure?"Conferma eliminazione":"Elimina"}</button>`}</div></dialog>`}
 
@@ -242,7 +242,7 @@ function App(){
  const persist=ns=>{setS(ns);sv("shop/main",ns).then(ok=>!ok&&setSt("⚠ salvataggio su Firebase non riuscito"))};
  useEffect(()=>{(async()=>{try{db=await fbInit()}catch(e){}
   setDbOn(!!db);setSt(db?"Dati salvati su Firebase":"Dati salvati solo su questo browser");
-  const m=await ld("shop/main");if(m)setS(s=>({...s,...m}));
+  const m=await ld("shop/main");if(m){let changed=false;(m.products||[]).forEach(p=>{if(p.cat=="Sigarette"){if(!p.costPerKg){p.cost=(+p.cost||0)/0.02;p.costPerKg=true;changed=true}if(!(+p.min>0)){p.min=3;changed=true}}});setS(s=>({...s,...m}));if(changed)await sv("shop/main",m)}
   const o={};for(const k of monthKeys(13)){const s=await ld("sales/"+k);if(s)o[k]=s}setSALES(o);ready.current=true})()},[]);
  useEffect(()=>{if(tab=="cassa"&&!dlg&&sc.current)sc.current.focus()},[tab,dlg,cart.length]);
  useEffect(()=>{const h=e=>{if(e.key=="F1"||e.key=="F2"){e.preventDefault();confRef.current(e.key=="F1"?"cash":"pos")}};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
@@ -265,7 +265,7 @@ function App(){
  const onScan=e=>{if(e.key!="Enter")return;const v=e.target.value.trim();e.target.value="";
   if(!v)return conf();if(v.toLowerCase()=="admin"){setTdlg(true);return}const p=S.products.find(x=>x.barcode==v);p?addId(p.id):setDlg({p:{barcode:v},scan:1})};
  const conf=m=>{const py=typeof m=="string"?m:pay;if(!rows.length||!ready.current)return;const ns=cl(S);let tot=0,cost=0;
-  const lines=cart.map(l=>{const p=ns.products.find(x=>x.id==l.id);p.stock-=l.q;tot+=p.price*l.q;cost+=p.cost*l.q;return{id:p.id,n:p.name,q:l.q,p:p.price,c:p.cost}});
+  const lines=cart.map(l=>{const p=ns.products.find(x=>x.id==l.id);p.stock-=l.q;tot+=p.price*l.q;cost+=((p.cat=="Sigarette"?p.cost*0.02:p.cost)*l.q);return{id:p.id,n:p.name,q:l.q,p:p.price,c:(p.cat=="Sigarette"?p.cost*0.02:p.cost)}});
   const t=lt(),k=t.slice(0,7),ss=cl(SALES);(ss[k]=ss[k]||{sales:[]}).sales.push({t,pay:py,total:tot,cost,lines});
   setSALES(ss);sv("sales/"+k,ss[k]);persist(ns);setCart([]);flash("Vendita registrata · "+eur(tot))};
  confRef.current=conf;const undo=()=>{const ss=cl(SALES),ns=cl(S);for(const k of Object.keys(ss).sort().reverse()){const a=ss[k].sales;if(a&&a.length){const s=a.pop();s.lines.forEach(l=>{const p=ns.products.find(x=>x.id==l.id);if(p)p.stock+=l.q});setSALES(ss);sv("sales/"+k,ss[k]);persist(ns);return flash("Annullata vendita da "+eur(s.total))}}flash("Nessuna vendita da annullare")};
@@ -278,7 +278,7 @@ function App(){
  const m30=sold30();
  const cfg={cr:7,cs:3,ld:1,...(S.cfg||{})},nowD=new Date().getDay(),dTue=(2-nowD+7)%7,dThu=(4-nowD+7)%7,md=mode||(dTue<=dThu?"s":"r");
  const fmt=n=>(+n||0).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),num=v=>parseFloat(String(v).replace(",","."))||0;
- const kgp=p=>(p.ppc||20)/1000,kgs=p=>kgp(p)*ppk(p),dk=d=>lt(d).slice(0,10),back=i=>dk(new Date(Date.now()-i*864e5));
+ const kgp=p=>0.02,kgs=p=>kgp(p)*ppk(p),dk=d=>lt(d).slice(0,10),back=i=>dk(new Date(Date.now()-i*864e5));
  const D={},T={};allSales().forEach(s=>{const d=s.t.slice(0,10);s.lines.forEach(l=>{const p=pf(l.id);if(!p||!isSig(p))return;const k=l.q*kgp(p);(D[l.id]=D[l.id]||{})[d]=(D[l.id][d]||0)+k;T[d]=(T[d]||0)+k})});
  const sumd=(M,x,y)=>{let t=0;for(let i=x;i<=y;i++)t+=M[back(i)]||0;return t};
  const t0=Object.keys(T).sort()[0],span=t0?Math.max(0,Math.min(56,Math.round((new Date(back(1))-new Date(t0))/864e5)+1)):0;
@@ -293,7 +293,7 @@ function App(){
  const setNd=(id,v)=>{const ns=cl(S);ns.nd=ns.nd||{};if(v==="")delete ns.nd[id];else ns.nd[id]=v;persist(ns)};
  const two=(k,fn)=>()=>{if(armed==k){setArmed("");fn()}else{setArmed(k);setTimeout(()=>setArmed(a=>a==k?"":a),3500)}};
  const regNota=()=>{const c=code.trim();if(!c)return flash("Inserisci il codice della nota");if(S.orders.some(o=>(o.code||"").toLowerCase()==c.toLowerCase()))return flash("Questo codice è già registrato");
-  const ns=cl(S),lines=[];Object.entries(ns.nd||{}).forEach(([id,v])=>{const p=ns.products.find(x=>x.id==id),kg=num(v);if(!p||!(kg>0))return;lines.push({id,n:p.name,kg,q:Math.max(1,Math.round(kg/kgs(p))),c:p.cost*ppk(p)})});
+  const ns=cl(S),lines=[];Object.entries(ns.nd||{}).forEach(([id,v])=>{const p=ns.products.find(x=>x.id==id),kg=num(v);if(!p||!(kg>0))return;lines.push({id,n:p.name,kg,q:Math.max(1,Math.round(kg/kgs(p))),c:p.cost*kgs(p)})});
   if(!lines.length)return flash("Inserisci almeno una quantità in kg");
   ns.orders.push({id:Date.now().toString(36),code:c,t:lt(),tipo:md,kg:lines.reduce((x,l)=>x+l.kg,0),total:lines.reduce((x,l)=>x+l.c*l.q,0),lines,status:"inviata"});ns.nd={};setCode("");persist(ns);flash("Nota "+c+" registrata")};
  const arrive=id=>{const ns=cl(S),o=ns.orders.find(x=>x.id==id);if(!o)return;o.lines.forEach(l=>{const p=ns.products.find(x=>x.id==l.id);if(p)p.dep=(p.dep||0)+l.q});o.status="arrivata";o.arr=lt();persist(ns);flash("Stecche caricate in deposito")};
@@ -318,7 +318,7 @@ function App(){
  const wipe=()=>{if(!TEST)return;const ns=cl(S);ns.orders=[];ns.draft={};ns.nd={};persist(ns);setSALES({});saveSales({});log("Vendite e note di test cancellate.")};
  const initStock=()=>{const ns=cl(S);ns.products.filter(isSig).forEach(x=>{x.stock=Math.round((x.min||15)*1.6);x.dep=3+hs(x.id)%6});persist(ns);log("Scorte iniziali impostate (banco e deposito).")};
  const zeroStock=()=>{const ns=cl(S);ns.products.filter(isSig).forEach(x=>{x.stock=0;x.dep=0});persist(ns);log("Scorte sigarette azzerate.")};
- const regTest=()=>{if(!sug.length)return log("Nessun suggerimento da registrare.");const ns=cl(S),lines=sug.map(x=>({id:x.p.id,n:x.p.name,kg:x.kg,q:x.st,c:x.p.cost*ppk(x.p)}));
+ const regTest=()=>{if(!sug.length)return log("Nessun suggerimento da registrare.");const ns=cl(S),lines=sug.map(x=>({id:x.p.id,n:x.p.name,kg:x.kg,q:x.st,c:x.p.cost*kgs(x.p)}));
   ns.orders.push({id:Date.now().toString(36),code:"TEST-"+(ns.orders.length+1),t:lt(),tipo:md,kg:lines.reduce((x,l)=>x+l.kg,0),total:lines.reduce((x,l)=>x+l.c*l.q,0),lines,status:"inviata"});persist(ns);log("Nota TEST-"+ns.orders.length+" registrata: "+fmt(totKg)+" kg.")};
  const arriveAll=()=>{const ns=cl(S);let c=0;ns.orders.forEach(o=>{if(o.status=="inviata"){o.lines.forEach(l=>{const x=ns.products.find(y=>y.id==l.id);if(x)x.dep=(x.dep||0)+l.q});o.status="arrivata";c++}});persist(ns);log(c+" note segnate come arrivate.")};
  const big=Object.entries(SALES).map(([k,v])=>[k,JSON.stringify(v).length]).sort((x,y)=>y[1]-x[1])[0];
@@ -366,7 +366,7 @@ function App(){
   <div className="sc"><table><thead><tr><th>Prodotto</th><th>Categoria</th><th className="r">Prezzo</th><th className="r">Costo</th><th className="r">Margine</th><th className="r">Soglia / minima</th><th className="r">Giacenza</th></tr></thead><tbody>
   ${S.products.filter(p=>(p.name+p.barcode+p.cat).toLowerCase().includes(q.toLowerCase())).sort((a,b)=>a.cat.localeCompare(b.cat)||a.name.localeCompare(b.name)).map(p=>html`
    <tr key=${p.id} className=${low(p)?"low":""} style=${{cursor:"pointer"}} onClick=${()=>setDlg({p})}><td><b>${p.name}</b><br/><small className="mu">${p.barcode}</small></td><td>${p.cat}</td>
-   <td className="r">${eur(p.price)}</td><td className="r">${eur(p.cost)}</td><td className="r">${eur(p.price-p.cost)}</td><td className="r">${p.min}</td><td className="r">${isSig(p)?html`<b>${p.stock}</b> pk · ${p.dep||0} st`:html`<b>${p.stock}</b>`}${low(p)&&" ⚠"}</td></tr>`)}
+   <td className="r">${eur(p.price)}</td><td className="r">${eur(p.cost)}${isSig(p)?"/kg":""}</td><td className="r">${eur(p.price-(isSig(p)?p.cost*kgp(p):p.cost))}</td><td className="r">${p.min}</td><td className="r">${isSig(p)?html`<b>${p.stock}</b> pk · ${p.dep||0} st`:html`<b>${p.stock}</b>`}${low(p)&&" ⚠"}</td></tr>`)}
   ${!S.products.length&&html`<tr><td colSpan="7" className="mu">Nessun prodotto. Scansiona un codice in Cassa oppure premi “Nuovo prodotto”.</td></tr>`}</tbody></table></div></div></section>`;
 
  const dnames=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"],when=dl==0?"oggi":dl==1?"domani":"tra "+dl+" giorni";
@@ -410,7 +410,7 @@ function App(){
  mon.forEach(s=>s.lines.forEach(l=>tp[l.n]=(tp[l.n]||0)+l.q));const top=Object.entries(tp).sort((a,b)=>b[1]-a[1]).slice(0,8);
  const noLeg={plugins:{legend:{display:false}}};
  const Stat=()=>html`<section id="stat"><div className="kpis">
-  ${[["Incasso oggi",eur(sum(day,s=>s.total))],["Vendite oggi",day.length],["Incasso del mese",eur(sum(mon,s=>s.total))],["Margine del mese",eur(sum(mon,s=>s.total-s.cost))],["Valore magazzino",eur(S.products.reduce((a,p)=>a+avail(p)*p.cost,0))]].map(([a,b])=>html`<div key=${a} className="kpi"><small>${a}</small><b>${b}</b></div>`)}</div>
+  ${[["Incasso oggi",eur(sum(day,s=>s.total))],["Vendite oggi",day.length],["Incasso del mese",eur(sum(mon,s=>s.total))],["Margine del mese",eur(sum(mon,s=>s.total-s.cost))],["Valore magazzino",eur(S.products.reduce((a,p)=>a+(isSig(p)?avail(p)*kgp(p)*p.cost:avail(p)*p.cost),0))]].map(([a,b])=>html`<div key=${a} className="kpi"><small>${a}</small><b>${b}</b></div>`)}</div>
   <div className="grid2">
   <div className="card"><h2>Incassi ultimi 14 giorni</h2><div className="ch"><${ChartBox} cfg=${{type:"bar",data:{labels:days.map(d=>d.slice(8)+"/"+d.slice(5,7)),datasets:[{label:"Incasso €",data:days.map(d=>sum(A.filter(s=>s.t.startsWith(d)),s=>s.total)),backgroundColor:"#0e8a8c",borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,...noLeg}}}/></div></div>
   <div className="card"><h2>Metodi di pagamento (mese)</h2><div className="ch"><${ChartBox} cfg=${{type:"doughnut",data:{labels:["Contanti","POS"],datasets:[{data:["cash","pos"].map(p=>sum(mon.filter(s=>s.pay==p),s=>s.total)),backgroundColor:["#ffb703","#0e8a8c"],borderWidth:0}]}}}/></div></div>
