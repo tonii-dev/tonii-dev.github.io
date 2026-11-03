@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gestionale Tabaccheria</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f3f5f9;--card:#fff;--tx:#18212f;--mu:#6b7585;--bd:#e2e6ee;--ac:#2563eb;--ac2:#1d4ed8;--ok:#16a34a;--bad:#dc2626;--warn:#fff4e5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141c;--card:#18202b;--tx:#e8edf5;--mu:#8e9aae;--bd:#2a3442;--ac:#3b82f6;--ac2:#60a5fa;--warn:#33281a}}
+:root[data-theme="dark"]{--bg:#0f141c;--card:#18202b;--tx:#e8edf5;--mu:#8e9aae;--bd:#2a3442;--ac:#3b82f6;--ac2:#60a5fa;--warn:#33281a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:6px;padding:8px 16px;flex-wrap:wrap}
+header h1{font-size:17px;margin:0 16px 0 0}
+.tab{border:0;background:none;color:var(--mu);font-size:15px;padding:9px 16px;border-radius:9px;cursor:pointer;font-weight:600}
+.tab.on{background:var(--ac);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:16px}
+input,select{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:9px 11px;min-width:0}
+input:focus,select:focus{outline:2px solid var(--ac);border-color:transparent}
+button.b{font:inherit;font-weight:600;border:0;border-radius:9px;padding:9px 15px;background:var(--ac);color:#fff;cursor:pointer}
+button.b:hover{background:var(--ac2)}button.g{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+button.ok{background:var(--ok)}button.x{background:none;border:0;color:var(--bad);cursor:pointer;font-size:18px}
+.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}@media(max-width:860px){.cols{grid-template-columns:1fr}}
+#scan{width:100%;font-size:22px;padding:14px;border:2px solid var(--ac)}
+table{width:100%;border-collapse:collapse}th{color:var(--mu);font-size:12px;text-transform:uppercase;text-align:left}
+th,td{padding:8px 6px;border-bottom:1px solid var(--bd);vertical-align:middle}td.r,th.r{text-align:right}
+.q{display:inline-flex;align-items:center;gap:6px}.q button{width:30px;height:30px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:17px;cursor:pointer}
+.tot{font-size:30px;font-weight:700;margin:8px 0}
+.pay{display:flex;gap:8px;margin:8px 0}.pay button{flex:1}
+.pay .on{background:var(--ac);color:#fff}
+.low td{background:var(--warn)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px}.kpi small{color:var(--mu)}.kpi b{display:block;font-size:24px;margin-top:4px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px}
+.ch{position:relative;height:260px}
+dialog{border:1px solid var(--bd);border-radius:14px;background:var(--card);color:var(--tx);padding:20px;width:min(440px,94vw)}
+dialog::backdrop{background:#0008}
+.f{display:grid;gap:8px;grid-template-columns:1fr 1fr}.f label{font-size:12px;color:var(--mu);display:grid;gap:3px}.f .w{grid-column:1/3}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ok);color:#fff;padding:12px 22px;border-radius:12px;font-weight:600;opacity:0;transition:.25s;pointer-events:none}
+#toast.s{opacity:1}.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-top:12px}.tile{font:inherit;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:10px;cursor:pointer;text-align:left}.tile:hover{border-color:var(--ac)}.mu{color:var(--mu)}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sc{overflow-x:auto}
+</style><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap"><style>
+:root{--bg:#e9edf3;--card:#fff;--tx:#10202f;--mu:#586779;--bd:#dce2ea;--ac:#0b4a8f;--ac2:#093b73;--ok:#12844a;--side:#0a2a52;--warn:#ffefcf}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1017;--card:#141c27;--tx:#e8edf4;--mu:#8997a9;--bd:#232f3f;--ac:#4a90e2;--ac2:#6aa5ec;--ok:#1ea160;--side:#060b12;--warn:#3a2d14}}
+body{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh;font-family:Barlow,"Segoe UI",system-ui,sans-serif;font-size:16px;font-variant-numeric:tabular-nums}
+header{position:sticky;top:0;height:100vh;align-self:start;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:4px;padding:22px 12px;background:var(--side);border:0;color:#fff}
+.logo{display:flex;align-items:center;gap:11px;margin:0 6px 26px;font-weight:700;font-size:21px}
+.logo i{font-style:normal;width:40px;height:40px;display:grid;place-items:center;background:#fff;color:var(--side);border-radius:9px;font-size:28px;font-weight:800}
+header .tab{text-align:left;color:#a9bddb;font-size:18px;padding:14px 16px;border-radius:11px;font-weight:600}
+header .tab:hover:not(.on){background:#ffffff1a}header .tab.on{background:#fff;color:var(--side)}
+#st{margin:auto 6px 0!important;color:#8fa6c8!important;font-size:12px!important}
+main{max-width:none;padding:26px 32px}
+.card{border:0;border-radius:18px;padding:22px;box-shadow:0 1px 2px #0a2a5214,0 10px 28px #0a2a520f}
+.card h2{font-size:20px;font-weight:700;margin-bottom:14px}
+th{text-transform:none;font-size:13px;font-weight:600;letter-spacing:0}th,td{padding:12px 8px}
+input,select{border-radius:11px;padding:11px 13px;font-size:16px}
+button.b{border-radius:11px;padding:12px 18px;font-size:16px}
+#scan{font-size:28px;font-weight:600;padding:20px 22px;border-radius:16px;margin-bottom:12px}
+.q button{width:40px;height:40px;font-size:21px;border-radius:11px}.q b{min-width:28px;text-align:center;font-size:19px}
+#cart td:first-child b{font-size:18px}#cart td.r{font-size:19px;font-weight:700}
+#cempty{text-align:center;padding:46px 0!important;font-size:18px}
+#cassa .cols{grid-template-columns:minmax(0,1fr) 390px}
+#cassa .cols>.card:last-child{background:var(--side);color:#fff;position:sticky;top:26px;align-self:start}
+#cassa .cols>.card:last-child .mu{color:#9db3d3}
+#cassa .cols>.card:last-child .tot{font-size:68px;font-weight:800;line-height:1;margin:6px 0 20px}
+#cassa .cols>.card:last-child .pay button{background:#ffffff14;color:#fff;border:2px solid #ffffff30;padding:18px 10px;font-size:19px}
+#cassa .cols>.card:last-child .pay button.on{background:#fff;color:var(--side);border-color:#fff}
+#cassa .cols>.card:last-child #conf{background:var(--ok);font-size:24px;padding:22px;width:100%;flex:none}
+#cassa .cols>.card:last-child button.g{background:#ffffff14;color:#fff;border:1px solid #ffffff2e}
+#cassa .cols>.card:last-child .row{flex-direction:column;align-items:stretch}
+#cassa .cols>.card:last-child h2{font-size:15px;color:#9db3d3;font-weight:600}
+.tiles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.tile{padding:16px;border-radius:13px;font-size:16px;border:0;box-shadow:inset 0 0 0 1px var(--bd)}
+.tile:hover{background:var(--ac);color:#fff;box-shadow:none}.tile:hover small{color:#ffffffcc}.tile:active{transform:scale(.97)}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.kpi{border:0;border-radius:18px;padding:18px;box-shadow:0 1px 2px #0a2a5214,0 10px 28px #0a2a520f}.kpi b{font-size:30px;font-weight:800}
+.kpi:first-child{background:var(--side);color:#fff;grid-column:span 2}.kpi:first-child small{color:#9db3d3}.kpi:first-child b{font-size:50px}
+.ch{height:300px}.grid2{gap:16px}
+dialog{border:0;border-radius:20px;padding:26px;box-shadow:0 24px 60px #0006}dialog::backdrop{background:#0a1a3099;backdrop-filter:blur(3px)}
+#toast{font-size:18px;padding:15px 28px;border-radius:14px}
+@media(max-width:860px){body{grid-template-columns:1fr}header{height:auto;flex-direction:row;flex-wrap:wrap;padding:8px;position:sticky;top:0;z-index:5}.logo,#st{display:none}header .tab{padding:10px 14px;font-size:16px}main{padding:14px}#cassa .cols{grid-template-columns:1fr}.kpi:first-child{grid-column:auto}}
+</style><style>#root{display:contents}.tab svg{margin-right:10px}.pay small{opacity:.6;margin-left:6px}#toast.s{animation:pop .25s}@keyframes pop{from{transform:translateX(-50%) scale(.9)}to{transform:translateX(-50%) scale(1)}}@media (prefers-reduced-motion:reduce){#toast.s{animation:none}}dialog h2{margin:0 0 14px}.b:disabled{opacity:.45;cursor:not-allowed}</style><style>
+:root{--bg:#edf2ef;--card:#fff;--tx:#13211f;--mu:#586a67;--bd:#d9e2de;--ac:#0e6b6e;--ac2:#0a5457;--ok:#1b9a6c;--side:#0d3b3c;--warn:#fff0cc;--gold:#ffb703}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1211;--card:#121e1d;--tx:#e6f0ee;--mu:#8aa09c;--bd:#1f302e;--ac:#2bb3b0;--ac2:#4fcbc8;--ok:#2bb585;--side:#061312;--warn:#3a2d12}}
+.logo i{background:var(--gold);color:#1a1405}
+header .tab{color:#9fc3c0;transition:background .18s,color .18s,box-shadow .18s}
+header .tab.on{box-shadow:inset 4px 0 0 var(--gold)}
+#st{color:#7fa8a4!important}
+#cassa .cols>.card:last-child .mu,#cassa .cols>.card:last-child h2{color:#9cc2be}
+#cassa .cols>.card:last-child #conf{background:var(--gold);color:#1a1405;font-weight:800;transition:transform .15s,background .15s,box-shadow .15s}
+#cassa .cols>.card:last-child #conf:hover:not(:disabled){background:#ffc633;transform:translateY(-2px);box-shadow:0 10px 24px #ffb70340}
+#cassa .cols>.card:last-child #conf:active:not(:disabled){transform:scale(.98)}
+#cassa .cols>.card:last-child #conf:disabled{background:#ffffff1c;color:#ffffff80}
+#scan:focus{box-shadow:0 0 0 6px color-mix(in srgb,var(--ac) 22%,transparent)}
+dialog::backdrop{background:#04181799}
+button,.tile,input,select,.q button{transition:background .15s,color .15s,border-color .15s,transform .12s,box-shadow .15s}
+button.b:active,.q button:active{transform:scale(.96)}
+main{animation:fadeIn .22s ease-out}
+#cassa .card:first-child tbody tr{animation:rowIn .25s ease-out}
+.bump{display:inline-block;animation:bump .28s ease-out}
+dialog[open]{animation:dlgIn .2s ease-out}
+.kpi,.card{transition:box-shadow .2s}.sel{background:var(--ac)!important;color:#fff!important;border-color:var(--ac)!important}.refill{background:var(--warn);border-radius:14px;padding:12px 14px;margin-bottom:14px}.remote{position:fixed;inset:0;z-index:60;background:var(--bg);color:var(--tx);display:grid;grid-template-rows:auto 1fr auto;gap:14px;padding:max(18px,env(safe-area-inset-top)) 18px max(18px,env(safe-area-inset-bottom));user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.rtop{background:var(--side);color:#fff;border-radius:22px;padding:18px 24px}.rtop .mu{color:#9cc2be}.rtot{font-size:clamp(52px,16vw,120px);font-weight:800;line-height:1.05}
+.rlist{overflow:auto;background:var(--card);border-radius:22px;padding:6px 20px;min-height:0}.rrow{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--bd);font-size:clamp(17px,4.4vw,24px)}
+.rempty{display:grid;place-items:center;height:100%;min-height:120px;font-size:20px}.rwarn{margin:12px 0;padding:12px 14px;border-radius:12px;background:var(--warn);font-weight:600}
+.rbtns{display:grid;grid-template-columns:1fr 1fr;gap:14px;min-height:30vh}
+.rb{font:inherit;font-weight:800;font-size:clamp(24px,6vw,42px);border:0;border-radius:26px;cursor:pointer;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;transition:transform .12s,opacity .15s}
+.rb.cash{background:var(--ok)}.rb.pos{background:var(--ac)}.rb:active:not(:disabled){transform:scale(.97)}.rb:disabled{opacity:.35;cursor:not-allowed}
+@media (orientation:landscape) and (min-width:700px){.remote{grid-template-columns:1.1fr 1fr;grid-template-rows:auto 1fr}.rtop,.rlist{grid-column:1}.rbtns{grid-column:2;grid-row:1/3;grid-template-columns:1fr;min-height:0}}
+.rmsg{margin:auto;text-align:center;font-size:21px;max-width:420px;line-height:1.5}
+.rok{position:fixed;inset:0;z-index:70;background:var(--ok);color:#fff;display:grid;place-content:center;text-align:center;font-size:clamp(30px,8vw,60px);font-weight:800;animation:fadeIn .15s}
+.testbar{position:sticky;top:0;z-index:20;background:#ffcc33;color:#1a1405;font-weight:700;padding:10px 16px;border-radius:12px;margin-bottom:14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}.tdlg{width:min(800px,96vw)}.tdlg h3{margin:18px 0 8px;font-size:16px}.tdate{font-size:26px;font-weight:800}.tclock{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:12px 16px}.tlog{font-size:13px;color:var(--mu);max-height:120px;overflow:auto}.tdlg label{display:inline-flex;align-items:center;gap:6px}
+.refill>div{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 0}button.b.bad{background:#d6454a}button.b.bad:hover{background:#b93a3f}.nt{table-layout:fixed}.nt th,.nt td{padding:13px 8px;vertical-align:top}.nt .n{text-align:right}.nt td small{display:block;margin-top:3px;line-height:1.35}.kgin{width:100%;max-width:96px;text-align:right}.hero{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 44px;margin:8px 0 4px}.hero .big{font-size:60px;font-weight:800;line-height:1}.up{color:#b45309;font-weight:700}.dn{color:var(--ac);font-weight:700}@media (prefers-color-scheme:dark){.up{color:#fbbf24}}.pill{display:inline-block;border-radius:99px;padding:3px 12px;font-size:13px;font-weight:700;background:var(--bg)}.nrow{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding:13px 0;border-top:1px solid var(--bd)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes rowIn{from{opacity:0;background:color-mix(in srgb,var(--gold) 35%,transparent)}to{opacity:1}}
+@keyframes bump{0%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes dlgIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body><div id="root"></div><script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script><script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><script>const {useState,useEffect,useRef}=React,html=htm.bind(React.createElement);
+const _D=Date;let OFF=0,TEST=false;
+window.Date=class extends _D{constructor(...a){a.length?super(...a):super(_D.now()+OFF)}static now(){return _D.now()+OFF}};
+const tp=q=>q=="shop/main"?"shop/test":q.replace(/^sales\//,"sales/t-");
+const eur=n=>(+n||0).toLocaleString("it-IT",{style:"currency",currency:"EUR"});
+const lt=(d=new Date())=>new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,19);
+const cl=o=>JSON.parse(JSON.stringify(o));
+const CATS=["Sigarette","Tabacco","Gratta e vinci","Valori bollati","Ricariche","Altro"];
+const P={receipt:"M4 2v20l3-2 3 2 3-2 3 2 3-2V2l-3 2-3-2-3 2-3-2zM8 8h8M8 12h8",package:"M21 8l-9-5-9 5v8l9 5 9-5zM3 8l9 5 9-5M12 13v8",truck:"M1 6h13v10H1zM14 10h4l3 3v3h-7zM6 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z",chart:"M3 3v18h18M7 15v3M12 10v8M17 6v12",plus:"M12 5v14M5 12h14",minus:"M5 12h14",x:"M6 6l12 12M18 6L6 18",undo:"M9 14L4 9l5-5M4 9h10a6 6 0 010 12h-3",cash:"M2 6h20v12H2zM12 15a3 3 0 100-6 3 3 0 000 6z",card:"M2 5h20v14H2zM2 10h20",down:"M12 3v13M6 11l6 6 6-6M4 21h16",up:"M12 17V4M6 10l6-6 6 6M4 21h16",check:"M4 12l5 5L20 6"};
+const Ic=({n,s=20})=>html`<svg width=${s} height=${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style=${{flex:"none",verticalAlign:"-4px"}}><path d=${P[n]}/></svg>`;
+let db=null;
+async function ld(path,real){if(!real&&TEST)path=tp(path);try{if(db){const[c,d]=path.split("/");const s=await db.collection(c).doc(d).get();if(s.exists)return s.data()}}catch(e){}
+ try{return JSON.parse(localStorage.getItem(path))}catch(e){return null}}
+async function sv(path,o){if(TEST)path=tp(path);try{localStorage.setItem(path,JSON.stringify(o))}catch(e){}
+ if(db){try{const[c,d]=path.split("/");await db.collection(c).doc(d).set(o)}catch(e){return false}}return true}
+const monthKeys=n=>[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-i);return lt(d).slice(0,7)});
+
+const WD=[.8,.9,.95,.95,1.05,1.3,1.25],hs=id=>[...String(id)].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+const baseOf=p=>Math.max(3,(p.min||15)*(0.45+(hs(p.id)%100)/100));
+function simDay(S,SALES,day,mult,touch){
+ const wd=WD[day.getDay()],units=[];
+ S.products.filter(p=>p.cat=="Sigarette").forEach(p=>{const k=p.ppst||10;let q=Math.max(0,Math.round(baseOf(p)*wd*mult*(0.8+Math.random()*0.4)));
+  if(touch){while(p.stock<q&&(p.dep||0)>0){p.dep--;p.stock+=k}q=Math.min(q,Math.max(0,p.stock));p.stock-=q}
+  for(let i=0;i<q;i++)units.push(p)});
+ units.sort(()=>Math.random()-.5);
+ for(let i=0;i<units.length;){const b=units.slice(i,i+1+Math.floor(Math.random()*3));i+=b.length;const m={};
+  b.forEach(p=>{m[p.id]=m[p.id]||{id:p.id,n:p.name,q:0,p:p.price,c:p.cost};m[p.id].q++});
+  const L=Object.values(m),d=new Date(day.getFullYear(),day.getMonth(),day.getDate(),8+Math.floor(Math.random()*12),Math.floor(Math.random()*60),Math.floor(Math.random()*60)),t=lt(d),k=t.slice(0,7);
+  (SALES[k]=SALES[k]||{sales:[]}).sales.push({t,pay:Math.random()<.45?"cash":"pos",total:L.reduce((a,l)=>a+l.p*l.q,0),cost:L.reduce((a,l)=>a+l.c*l.q,0),lines:L})}
+ if(touch)S.products.forEach(p=>{if(p.cat=="Sigarette"&&p.min>0)while(p.stock<=p.min&&(p.dep||0)>0){p.dep--;p.stock+=(p.ppst||10)}})}
+
+function TestDlg({T,onClose}){
+ const ref=useRef(),[wk,setWk]=useState(4),[tr,setTr]=useState(0),[jd,setJd]=useState("");
+ useEffect(()=>{ref.current.showModal()},[]);
+ const bt=(l,f,c="b g")=>html`<button className=${c} onClick=${f}>${l}</button>`;
+ return html`<dialog ref=${ref} className="tdlg" onClose=${onClose}><h2>🧪 Strumenti di test</h2>
+  ${!T.on?html`<p>I test lavorano su una <b>copia separata</b> dei dati: vendite e giacenze vere non vengono toccate. Finché sei in test vedrai una barra gialla in alto.</p>
+   <div className="row">${bt("Attiva modalità test",T.enter,"b")}${bt("Chiudi",()=>ref.current.close())}</div>`
+  :html`<div className="tclock"><div><small className="mu">Data simulata</small><div className="tdate">${T.nowTxt}</div></div>${bt("Torna alla data reale",T.realNow)}</div>
+   <h3>Avanza nel tempo</h3>
+   <div className="row">${[1,3,7,14,30].map(n=>bt("+"+n+(n==1?" giorno":" giorni"),()=>T.adv(n)))}${bt("Fino a martedì",()=>T.adv(T.toDay(2)),"b")}${bt("Fino a giovedì",()=>T.adv(T.toDay(4)),"b")}</div>
+   <div className="row" style=${{marginTop:10}}><input type="date" value=${jd} onChange=${e=>setJd(e.target.value)}/>${bt("Vai a questa data",()=>jd&&T.jump(jd))}</div>
+   <div className="row" style=${{marginTop:10}}><label><input type="checkbox" checked=${T.sim} onChange=${e=>T.setSim(e.target.checked)}/> Simula le vendite dei giorni saltati</label>
+    <label><input type="checkbox" checked=${T.auto} onChange=${e=>T.setAuto(e.target.checked)}/> Consegna le note il giorno dopo</label>
+    <label>Vendite ×<b>${T.mult.toFixed(1)}</b> <input type="range" min="0.3" max="2.5" step="0.1" value=${T.mult} onChange=${e=>T.setMult(+e.target.value)}/></label></div>
+   <h3>Dati di test</h3>
+   <div className="row">${bt("Scorte iniziali",T.initStock)}${bt("Azzera scorte",T.zeroStock)}
+    <select value=${wk} onChange=${e=>setWk(+e.target.value)}>${[2,4,8].map(n=>html`<option key=${n} value=${n}>${n} settimane</option>`)}</select>
+    <select value=${tr} onChange=${e=>setTr(+e.target.value)}>${[[-30,"ultima settimana −30%"],[-15,"ultima settimana −15%"],[0,"andamento stabile"],[15,"ultima settimana +15%"],[30,"ultima settimana +30%"]].map(([v,l])=>html`<option key=${v} value=${v}>${l}</option>`)}</select>
+    ${bt("Genera storico",()=>T.hist(wk,tr),"b")}</div>
+   <div className="row" style=${{marginTop:10}}>${bt("Svuota vendite e note",T.wipe)}${bt("Reset: ricopia i dati reali",T.reset)}</div>
+   <h3>Nota sigarette</h3>
+   <div className="row">${bt("Registra la nota con i suggeriti ("+T.nSug+")",T.regTest,"b")}${bt("Segna arrivate le note in arrivo",T.arriveAll)}${bt("Vai alla Nota",T.toNota)}</div>
+   <h3>Registro e controlli</h3><div className="tlog">${T.health}<br/>${T.log.map((l,i)=>html`<div key=${i}>${l}</div>`)}</div>
+   <div className="row" style=${{marginTop:16}}>${bt("Chiudi",()=>ref.current.close())}<button className="b bad" style=${{marginLeft:"auto"}} onClick=${T.exit}>Esci dalla modalità test</button></div>`}</dialog>`}
+
+function ChartBox({cfg}){const r=useRef(),c=useRef();
+ useEffect(()=>{const cs=getComputedStyle(document.documentElement);Chart.defaults.color=cs.getPropertyValue("--mu");Chart.defaults.borderColor=cs.getPropertyValue("--bd");Chart.defaults.font.family="Barlow,system-ui,sans-serif";
+  c.current=new Chart(r.current,{options:{responsive:true,maintainAspectRatio:false},...cfg});return()=>c.current.destroy()},[JSON.stringify(cfg)]);
+ return html`<canvas ref=${r}/>`}
+
+function ProdDlg({p,onSave,onDel,onClose}){
+ const ref=useRef(),[sure,setSure]=useState(false);const[f,setF]=useState({barcode:"",name:"",cat:"Sigarette",price:"",cost:"",min:"",stock:"",dep:"",ppst:10,ppc:20,...p});
+ useEffect(()=>{ref.current.showModal()},[]);
+ const fld=(k,l,t="text",w)=>html`<label className=${w?"w":""}>${l}<input type=${t} step=${t=="number"?"0.01":undefined} value=${f[k]} autoFocus=${k==(p.barcode?"name":"barcode")} onChange=${e=>setF({...f,[k]:e.target.value})}/></label>`;
+ const save=()=>{if(!f.name.trim())return;onSave({...f,barcode:f.barcode.trim(),name:f.name.trim(),price:+f.price||0,cost:+f.cost||0,min:+f.min||0,stock:+f.stock||0,dep:+f.dep||0,ppst:+f.ppst||10,ppc:+f.ppc||20})};
+ return html`<dialog ref=${ref} onClose=${onClose} onKeyDown=${e=>e.key=="Enter"&&e.target.tagName=="INPUT"&&save()}>
+  <h2>${p.id?"Modifica prodotto":"Nuovo prodotto"}</h2><div className="f">
+  ${fld("barcode","Codice a barre","text",1)}${fld("name","Nome","text",1)}
+  <label>Categoria<select value=${f.cat} onChange=${e=>setF({...f,cat:e.target.value})}>${CATS.map(c=>html`<option key=${c}>${c}</option>`)}</select></label>
+  ${fld("price","Prezzo vendita","number")}${fld("cost","Costo acquisto","number")}${f.cat=="Sigarette"?html`${fld("min","Soglia banco (pacchetti)","number")}${fld("stock","Pacchetti al banco","number")}${fld("dep","Stecche in deposito","number")}${fld("ppst","Pacchetti per stecca","number")}${fld("ppc","Sigarette per pacchetto","number")}`:html`${fld("min","Scorta minima","number")}${fld("stock","Giacenza","number")}`}</div>
+  <div className="row" style=${{marginTop:16}}><button className="b" onClick=${save}>Salva</button><button className="b g" onClick=${()=>ref.current.close()}>Annulla</button>
+  ${p.id&&html`<button className="b bad" style=${{marginLeft:"auto"}} onClick=${()=>sure?onDel():(setSure(true),setTimeout(()=>setSure(false),3500))}>${sure?"Conferma eliminazione":"Elimina"}</button>`}</div></dialog>`}
+
+function Remote(){
+ const[L,setL]=useState(null),[sent,setSent]=useState(null),[msg,setMsg]=useState(""),[ok,setOk]=useState(null),[err,setErr]=useState(false);
+ const sr=useRef(null);
+ useEffect(()=>{let un=()=>{},iv;(async()=>{
+  try{if(!db&&window.claude)db=await claude.use("db")}catch(e){}
+  if(!db){setErr(true);return}
+  un=db.collection("remote").doc("live").onSnapshot(sn=>{const d=sn.exists?sn.data():{seq:0,total:0,lines:[]};setL(d);
+   const x=sr.current;if(x&&d.done&&d.done.id==x.id){sr.current=null;setSent(null);if(d.done.ok){setOk({m:x.m,total:d.done.total});setTimeout(()=>setOk(null),2600)}else setMsg("Il totale è cambiato: controlla e riprova.")}},()=>setErr(true));
+  const ping=()=>db.collection("remote").doc("ping").set({t:Date.now()}).catch(()=>{});ping();iv=setInterval(ping,5000);
+  try{navigator.wakeLock&&navigator.wakeLock.request("screen").catch(()=>{})}catch(e){}})();
+  return()=>{un();clearInterval(iv)}},[]);
+ const n=L&&L.lines?L.lines.length:0;
+ const send=m=>{if(!n||sr.current)return;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);sr.current={id,m};setSent({id,m});setMsg("");
+  db.collection("remote").doc("cmd").set({id,m,seq:L.seq,total:L.total}).catch(()=>{sr.current=null;setSent(null);setMsg("Invio non riuscito. Riprova.")});
+  setTimeout(()=>{if(sr.current&&sr.current.id==id){sr.current=null;setSent(null);setMsg("Il PC non risponde. Controlla che il gestionale sia aperto.")}},7000)};
+ if(err)return html`<div className="remote"><div className="rmsg">Impossibile collegarsi.<br/>Apri questo link da claude.ai, con lo stesso account usato sul PC.</div></div>`;
+ return html`<div className="remote">
+  <div className="rtop"><div className="mu">Totale da pagare</div><div className="rtot">${eur(L?L.total:0)}</div></div>
+  <div className="rlist">${n?L.lines.map((l,i)=>html`<div className="rrow" key=${i}><span>${l.q}× ${l.n}</span><b>${eur(l.t)}</b></div>`):html`<div className="rempty mu">${L?"Nessuna vendita in corso":"Connessione…"}</div>`}
+   ${msg&&html`<div className="rwarn">${msg}</div>`}</div>
+  <div className="rbtns"><button className="rb cash" disabled=${!n||!!sent} onClick=${()=>send("cash")}><${Ic} n="cash" s=${48}/>${sent&&sent.m=="cash"?"Invio…":"Contanti"}</button>
+   <button className="rb pos" disabled=${!n||!!sent} onClick=${()=>send("pos")}><${Ic} n="card" s=${48}/>${sent&&sent.m=="pos"?"Invio…":"Carta"}</button></div>
+  ${ok&&html`<div className="rok"><div>✓ Vendita registrata<br/>${eur(ok.total)}<br/><small>${ok.m=="cash"?"Contanti":"Carta"}</small></div></div>`}</div>`}
+
+function App(){
+ const[S,setS]=useState({products:[],draft:{},orders:[]}),[SALES,setSALES]=useState({});
+ const[tab,setTab]=useState("cassa"),[cart,setCart]=useState([]),[pay,setPay]=useState("cash"),[dlg,setDlg]=useState(null);
+ const[toast,setToast]=useState(""),[st,setSt]=useState("Caricamento…"),[q,setQ]=useState(""),[osel,setOsel]=useState(""),[cnt,setCnt]=useState("");
+ const sc=useRef(),tt=useRef(),ready=useRef(false),confRef=useRef(()=>{}),live=useRef({seq:0}),doneRef=useRef(null),pushRef=useRef(()=>{}),pingAt=useRef(0),totRef=useRef(0),nRef=useRef(0),[dbOn,setDbOn]=useState(false),[remoteOn,setRemoteOn]=useState(false),[mode,setMode]=useState(null),[armed,setArmed]=useState(""),[code,setCode]=useState(""),[,setTick]=useState(0),[tdlg,setTdlg]=useState(false),[tlog,setTlog]=useState([]),[tmult,setTmult]=useState(1),[tsim,setTsim]=useState(true),[tauto,setTauto]=useState(true);
+ const pf=id=>S.products.find(p=>p.id==id);
+ const flash=t=>{setToast(t);clearTimeout(tt.current);tt.current=setTimeout(()=>setToast(""),1900)};
+ const persist=ns=>{setS(ns);sv("shop/main",ns).then(ok=>!ok&&setSt("⚠ salvataggio online non riuscito"))};
+ useEffect(()=>{(async()=>{try{if(window.claude)db=await claude.use("db")}catch(e){}
+  setDbOn(!!db);setSt(db?"Dati salvati online":"Dati salvati solo su questo browser");
+  const m=await ld("shop/main");if(m)setS(s=>({...s,...m}));
+  const o={};for(const k of monthKeys(13)){const s=await ld("sales/"+k);if(s)o[k]=s}setSALES(o);ready.current=true})()},[]);
+ useEffect(()=>{if(tab=="cassa"&&!dlg&&sc.current)sc.current.focus()},[tab,dlg,cart.length]);
+ useEffect(()=>{const h=e=>{if(e.key=="F1"||e.key=="F2"){e.preventDefault();confRef.current(e.key=="F1"?"cash":"pos")}};addEventListener("keydown",h);return()=>removeEventListener("keydown",h)},[]);
+ const allSales=()=>Object.values(SALES).flatMap(m=>m.sales||[]).sort((a,b)=>a.t<b.t?-1:1);
+ const rows=cart.map(l=>({l,p:pf(l.id)})).filter(x=>x.p),total=rows.reduce((a,x)=>a+x.p.price*x.l.q,0);
+ totRef.current=total;nRef.current=rows.length;
+ pushRef.current=()=>{const seq=Date.now();live.current={seq};if(!db)return;db.collection("remote").doc("live").set({seq,total,lines:rows.map(({l,p})=>({n:p.name,q:l.q,t:p.price*l.q})),done:doneRef.current,upd:seq}).catch(()=>{})};
+ useEffect(()=>{if(!dbOn)return;const h=setTimeout(()=>pushRef.current(),200);return()=>clearTimeout(h)},[dbOn,JSON.stringify(cart),S.products]);
+ useEffect(()=>{if(!dbOn)return;let first=false,pf0=false,handled="";
+  const u1=db.collection("remote").doc("cmd").onSnapshot(sn=>{const c=sn.exists?sn.data():null;if(!first){first=true;handled=c?c.id:"";return}
+   if(!c||c.id===handled)return;handled=c.id;
+   if(c.seq===live.current.seq&&Math.abs((c.total||0)-totRef.current)<.005&&nRef.current>0&&(c.m=="cash"||c.m=="pos")){doneRef.current={id:c.id,ok:true,total:totRef.current};confRef.current(c.m)}
+   else{doneRef.current={id:c.id,ok:false};pushRef.current()}});
+  const u2=db.collection("remote").doc("ping").onSnapshot(()=>{if(!pf0){pf0=true;return}pingAt.current=Date.now();setRemoteOn(true)});
+  const iv=setInterval(()=>setRemoteOn(pingAt.current>0&&Date.now()-pingAt.current<12000),3000);
+  return()=>{u1();u2();clearInterval(iv)}},[dbOn]);
+ const addId=id=>setCart(c=>c.find(x=>x.id==id)?c.map(x=>x.id==id?{...x,q:x.q+1}:x):[...c,{id,q:1}]);
+ const cq=(id,d)=>setCart(c=>c.map(x=>x.id==id?{...x,q:x.q+d}:x).filter(x=>x.q>0));
+ const onScan=e=>{if(e.key!="Enter")return;const v=e.target.value.trim();e.target.value="";
+  if(!v)return conf();if(v.toLowerCase()=="admin"){setTdlg(true);return}const p=S.products.find(x=>x.barcode==v);p?addId(p.id):setDlg({p:{barcode:v},scan:1})};
+ const conf=m=>{const py=typeof m=="string"?m:pay;if(!rows.length||!ready.current)return;const ns=cl(S);let tot=0,cost=0;
+  const lines=cart.map(l=>{const p=ns.products.find(x=>x.id==l.id);p.stock-=l.q;tot+=p.price*l.q;cost+=p.cost*l.q;return{id:p.id,n:p.name,q:l.q,p:p.price,c:p.cost}});
+  const t=lt(),k=t.slice(0,7),ss=cl(SALES);(ss[k]=ss[k]||{sales:[]}).sales.push({t,pay:py,total:tot,cost,lines});
+  setSALES(ss);sv("sales/"+k,ss[k]);persist(ns);setCart([]);flash("Vendita registrata · "+eur(tot))};
+ confRef.current=conf;const undo=()=>{const ss=cl(SALES),ns=cl(S);for(const k of Object.keys(ss).sort().reverse()){const a=ss[k].sales;if(a&&a.length){const s=a.pop();s.lines.forEach(l=>{const p=ns.products.find(x=>x.id==l.id);if(p)p.stock+=l.q});setSALES(ss);sv("sales/"+k,ss[k]);persist(ns);return flash("Annullata vendita da "+eur(s.total))}}flash("Nessuna vendita da annullare")};
+ const saveProd=o=>{const ns=cl(S);if(o.id)Object.assign(ns.products.find(x=>x.id==o.id),o);else{o.id=Date.now().toString(36);ns.products.push(o);if(dlg.scan)addId(o.id)}setDlg(null);persist(ns)};
+ const delProd=()=>{const ns=cl(S);ns.products=ns.products.filter(p=>p.id!=dlg.p.id);delete ns.draft[dlg.p.id];setDlg(null);persist(ns)};
+ const ppk=p=>p.ppst||10,avail=p=>p.stock+(p.dep||0)*ppk(p),isSig=p=>p.cat=="Sigarette",low=p=>p.min>0&&avail(p)<=p.min;
+ const refill=S.products.filter(p=>isSig(p)&&p.min>0&&p.stock<=p.min&&(p.dep||0)>0).map(p=>({p,n:Math.min(p.dep,Math.max(1,Math.ceil((p.min*2-p.stock)/ppk(p))))}));
+ const took=(id,n)=>{const ns=cl(S),p=ns.products.find(x=>x.id==id);p.dep-=n;p.stock+=n*ppk(p);persist(ns);flash(n+(n==1?" stecca":" stecche")+" al banco")};
+ const sold30=()=>{const lim=lt(new Date(Date.now()-30*864e5)),m={};allSales().filter(s=>s.t>=lim).forEach(s=>s.lines.forEach(l=>m[l.id]=(m[l.id]||0)+l.q));return m};
+ const m30=sold30();
+ const cfg={cr:7,cs:3,ld:1,...(S.cfg||{})},nowD=new Date().getDay(),dTue=(2-nowD+7)%7,dThu=(4-nowD+7)%7,md=mode||(dTue<=dThu?"s":"r");
+ const fmt=n=>(+n||0).toLocaleString("it-IT",{minimumFractionDigits:1,maximumFractionDigits:1}),num=v=>parseFloat(String(v).replace(",","."))||0;
+ const kgp=p=>(p.ppc||20)/1000,kgs=p=>kgp(p)*ppk(p),dk=d=>lt(d).slice(0,10),back=i=>dk(new Date(Date.now()-i*864e5));
+ const D={},T={};allSales().forEach(s=>{const d=s.t.slice(0,10);s.lines.forEach(l=>{const p=pf(l.id);if(!p||!isSig(p))return;const k=l.q*kgp(p);(D[l.id]=D[l.id]||{})[d]=(D[l.id][d]||0)+k;T[d]=(T[d]||0)+k})});
+ const sumd=(M,x,y)=>{let t=0;for(let i=x;i<=y;i++)t+=M[back(i)]||0;return t};
+ const t0=Object.keys(T).sort()[0],span=t0?Math.max(0,Math.min(56,Math.round((new Date(back(1))-new Date(t0))/864e5)+1)):0;
+ const wd=(()=>{if(span<21)return[1,1,1,1,1,1,1];const sm=Array(7).fill(0),c=Array(7).fill(0);for(let i=1;i<=span;i++){const d=new Date(Date.now()-i*864e5);sm[d.getDay()]+=T[dk(d)]||0;c[d.getDay()]++}const av=sm.map((x,i)=>c[i]?x/c[i]:0),m=av.reduce((x,y)=>x+y,0)/7||1;return av.map(x=>x/m||1)})();
+ const dl=md=="r"?dThu:dTue,N=Math.max(1,md=="r"?cfg.cr:cfg.cs),H=dl+cfg.ld+N-1,wsum=Array.from({length:H},(_,j)=>wd[(nowD+j+1)%7]).reduce((x,y)=>x+y,0);
+ const lastO=id=>{for(const o of S.orders.slice().reverse()){const l=(o.lines||[]).find(x=>x.id==id);if(l)return{o,l}}return null};
+ const n7=Math.min(7,span)||1,n28=Math.min(28,span)||1;
+ const sug=S.products.filter(isSig).map(p=>{const Dp=D[p.id]||{},a7=sumd(Dp,1,n7)/n7,a28=sumd(Dp,1,n28)/n28,f=span?0.6*a7+0.4*a28:0,prev=span>=14?sumd(Dp,8,14):0,tr=prev>0.5?(a7*7)/prev-1:null,av=avail(p)*kgp(p),st=Math.ceil(Math.max(0,f*wsum*1.05-av)/kgs(p)-1e-9)||(!f&&low(p)?1:0);
+  return{p,f,tr,av,days:f>0?av/f:null,st,kg:st*kgs(p)}}).filter(x=>x.st>0).sort((x,y)=>y.kg-x.kg);
+ const totKg=sug.reduce((x,y)=>x+y.kg,0),totSt=sug.reduce((x,y)=>x+y.st,0);
+ const tw=sumd(T,1,n7)*7/n7,pw=span>=14?sumd(T,8,14):0,trT=pw>1?tw/pw-1:null;
+ const setNd=(id,v)=>{const ns=cl(S);ns.nd=ns.nd||{};if(v==="")delete ns.nd[id];else ns.nd[id]=v;persist(ns)};
+ const two=(k,fn)=>()=>{if(armed==k){setArmed("");fn()}else{setArmed(k);setTimeout(()=>setArmed(a=>a==k?"":a),3500)}};
+ const regNota=()=>{const c=code.trim();if(!c)return flash("Inserisci il codice della nota");if(S.orders.some(o=>(o.code||"").toLowerCase()==c.toLowerCase()))return flash("Questo codice è già registrato");
+  const ns=cl(S),lines=[];Object.entries(ns.nd||{}).forEach(([id,v])=>{const p=ns.products.find(x=>x.id==id),kg=num(v);if(!p||!(kg>0))return;lines.push({id,n:p.name,kg,q:Math.max(1,Math.round(kg/kgs(p))),c:p.cost*ppk(p)})});
+  if(!lines.length)return flash("Inserisci almeno una quantità in kg");
+  ns.orders.push({id:Date.now().toString(36),code:c,t:lt(),tipo:md,kg:lines.reduce((x,l)=>x+l.kg,0),total:lines.reduce((x,l)=>x+l.c*l.q,0),lines,status:"inviata"});ns.nd={};setCode("");persist(ns);flash("Nota "+c+" registrata")};
+ const arrive=id=>{const ns=cl(S),o=ns.orders.find(x=>x.id==id);if(!o)return;o.lines.forEach(l=>{const p=ns.products.find(x=>x.id==l.id);if(p)p.dep=(p.dep||0)+l.q});o.status="arrivata";o.arr=lt();persist(ns);flash("Stecche caricate in deposito")};
+ const cancelO=id=>{const ns=cl(S);ns.orders=ns.orders.filter(o=>o.id!=id);persist(ns)};
+ const log=m=>setTlog(l=>[m,...l].slice(0,8)),saveSales=ss=>{new Set([...monthKeys(24),...Object.keys(ss)]).forEach(k=>sv("sales/"+k,ss[k]||{sales:[]}))};
+ const enterTest=async()=>{if(TEST)return;TEST=true;let t=await ld("shop/main");if(!t){t={...cl(S),orders:[],draft:{},nd:{},toff:0};await sv("shop/main",t)}
+  OFF=t.toff||0;const o={};for(const k of monthKeys(24)){const x=await ld("sales/"+k);if(x)o[k]=x}
+  setS({products:[],draft:{},orders:[],...t});setSALES(o);setCart([]);setTick(x=>x+1);log("Modalità test attiva: i dati veri non vengono toccati.")};
+ const exitTest=async()=>{TEST=false;OFF=0;setCart([]);const m=await ld("shop/main"),o={};for(const k of monthKeys(13)){const x=await ld("sales/"+k);if(x)o[k]=x}
+  setS({products:[],draft:{},orders:[],...(m||{})});setSALES(o);setTick(x=>x+1);log("Tornato ai dati reali.")};
+ const resetTest=async()=>{if(!TEST)return;const real=await ld("shop/main",true),t={...(real||{products:[]}),orders:[],draft:{},nd:{},toff:0};OFF=0;await sv("shop/main",t);saveSales({});setS({products:[],draft:{},orders:[],...t});setSALES({});setTick(x=>x+1);log("Dati di test ricopiati dai dati reali.")};
+ const adv=days=>{if(!TEST||days<1)return;const ns=cl(S),ss=cl(SALES),base=new Date();base.setHours(0,0,0,0);
+  const dayAt=i=>{const d=new Date(base);d.setDate(base.getDate()+i);return d};
+  const deliver=d=>{if(!tauto)return;const ds=dk(d);ns.orders.forEach(o=>{if(o.status=="inviata"&&o.t.slice(0,10)<ds){o.lines.forEach(l=>{const x=ns.products.find(y=>y.id==l.id);if(x)x.dep=(x.dep||0)+l.q});o.status="arrivata";o.arr=lt(d)}})};
+  if(tsim)for(let i=0;i<days;i++){if(i>0)deliver(dayAt(i));simDay(ns,ss,dayAt(i),tmult,true)}
+  deliver(dayAt(days));const tg=dayAt(days);tg.setHours(9,0,0,0);OFF=tg.getTime()-_D.now();ns.toff=OFF;
+  persist(ns);setSALES(ss);saveSales(ss);setTick(x=>x+1);log("Avanzato di "+days+(days==1?" giorno":" giorni")+": ora è "+tg.toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"numeric"})+".")};
+ const jump=v=>{const b=new Date();b.setHours(0,0,0,0);const n=Math.round((new Date(v+"T12:00:00")-b)/864e5);n<1?log("Scegli una data futura."):adv(n)};
+ const genHist=(weeks,trend)=>{if(!TEST)return;const ns=cl(S),ss={},b=new Date();b.setHours(0,0,0,0);ns.orders=[];ns.draft={};ns.nd={};
+  for(let i=weeks*7;i>=1;i--){const d=new Date(b);d.setDate(b.getDate()-i);simDay(ns,ss,d,tmult*(i<=7?1+trend/100:1),false)}
+  persist(ns);setSALES(ss);saveSales(ss);log("Storico di "+weeks+" settimane generato"+(trend?" (ultima settimana "+(trend>0?"+":"")+trend+"%)":"")+".")};
+ const wipe=()=>{if(!TEST)return;const ns=cl(S);ns.orders=[];ns.draft={};ns.nd={};persist(ns);setSALES({});saveSales({});log("Vendite e note di test cancellate.")};
+ const initStock=()=>{const ns=cl(S);ns.products.filter(isSig).forEach(x=>{x.stock=Math.round((x.min||15)*1.6);x.dep=3+hs(x.id)%6});persist(ns);log("Scorte iniziali impostate (banco e deposito).")};
+ const zeroStock=()=>{const ns=cl(S);ns.products.filter(isSig).forEach(x=>{x.stock=0;x.dep=0});persist(ns);log("Scorte sigarette azzerate.")};
+ const regTest=()=>{if(!sug.length)return log("Nessun suggerimento da registrare.");const ns=cl(S),lines=sug.map(x=>({id:x.p.id,n:x.p.name,kg:x.kg,q:x.st,c:x.p.cost*ppk(x.p)}));
+  ns.orders.push({id:Date.now().toString(36),code:"TEST-"+(ns.orders.length+1),t:lt(),tipo:md,kg:lines.reduce((x,l)=>x+l.kg,0),total:lines.reduce((x,l)=>x+l.c*l.q,0),lines,status:"inviata"});persist(ns);log("Nota TEST-"+ns.orders.length+" registrata: "+fmt(totKg)+" kg.")};
+ const arriveAll=()=>{const ns=cl(S);let c=0;ns.orders.forEach(o=>{if(o.status=="inviata"){o.lines.forEach(l=>{const x=ns.products.find(y=>y.id==l.id);if(x)x.dep=(x.dep||0)+l.q});o.status="arrivata";c++}});persist(ns);log(c+" note segnate come arrivate.")};
+ const big=Object.entries(SALES).map(([k,v])=>[k,JSON.stringify(v).length]).sort((x,y)=>y[1]-x[1])[0];
+ const TT={on:TEST,nowTxt:new Date().toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long",year:"numeric"})+" · "+new Date().toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"}),
+  enter:enterTest,exit:async()=>{await exitTest();setTdlg(false)},reset:resetTest,realNow:()=>{OFF=0;setTick(x=>x+1)},adv,jump,toDay:t=>{const n=(t-new Date().getDay()+7)%7;return n||7},
+  sim:tsim,setSim:setTsim,auto:tauto,setAuto:setTauto,mult:tmult,setMult:setTmult,hist:genHist,wipe,initStock,zeroStock,regTest,arriveAll,toNota:()=>{setTab("ord");setTdlg(false)},nSug:sug.length,log:tlog,
+  health:big?"Mese più pesante: "+big[0]+" · "+Math.round(big[1]/1024)+" KB (il limite per ogni documento è circa 256 KB).":"Nessuna vendita registrata."};
+ const backup=async()=>{try{const dl=window.claude?await claude.use("downloads"):null;if(!dl)return flash("Download non disponibile");await dl.save({filename:"backup-tabaccheria-"+lt().slice(0,10)+".json",data:JSON.stringify({S,SALES})})}catch(e){}};
+ const restore=async e=>{const f=e.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());if(!o.S||!o.SALES)throw 0;
+  setS({products:[],draft:{},orders:[],...o.S});setSALES(o.SALES);await sv("shop/main",o.S);for(const k in o.SALES)await sv("sales/"+k,o.SALES[k]);flash("Backup ripristinato")}catch(x){flash("File non valido")}};
+
+ const A=allSales(),d0=lt().slice(0,10),m0=d0.slice(0,7),sum=(a,f)=>a.reduce((x,s)=>x+f(s),0);
+ const day=A.filter(s=>s.t.startsWith(d0)),mon=A.filter(s=>s.t.startsWith(m0));
+ const cash=sum(day.filter(s=>s.pay=="cash"),s=>s.total),posT=sum(day.filter(s=>s.pay=="pos"),s=>s.total);
+ const tiles=[...S.products].sort((a,b)=>(m30[b.id]||0)-(m30[a.id]||0)).slice(0,12);
+
+ const Cassa=()=>html`<section id="cassa"><div className="cols">
+  <div className="card"><h2>Scansiona</h2>
+   ${refill.length>0&&html`<div className="refill"><b>Prendi dal deposito</b>${refill.map(({p,n})=>html`<div key=${p.id}><span>${n} ${n==1?"stecca":"stecche"} · <b>${p.name}</b> <small className="mu">(banco: ${p.stock} pacchetti, deposito: ${p.dep} stecche)</small></span><button className="b ok" style=${{padding:"6px 12px"}} onClick=${()=>took(p.id,n)}>Preso</button></div>`)}</div>`}
+   <input id="scan" ref=${sc} placeholder="Scansiona un codice a barre…" autoComplete="off" onKeyDown=${onScan}/>
+   ${rows.length?html`<div className="sc"><table><thead><tr><th>Prodotto</th><th>Quantità</th><th className="r">Importo</th><th></th></tr></thead><tbody>
+    ${rows.map(({l,p})=>html`<tr key=${l.id}><td><b>${p.name}</b><br/><small className="mu">${eur(p.price)} · giacenza ${p.stock}</small></td>
+     <td><span className="q"><button onClick=${()=>cq(l.id,-1)}><${Ic} n="minus" s=${16}/></button><b key=${l.q} className="bump">${l.q}</b><button onClick=${()=>cq(l.id,1)}><${Ic} n="plus" s=${16}/></button></span></td>
+     <td className="r">${eur(p.price*l.q)}</td><td><button className="x" onClick=${()=>cq(l.id,-999)}><${Ic} n="x" s=${18}/></button></td></tr>`)}</tbody></table></div>`
+    :html`<div id="cempty" className="mu">Carrello vuoto. Scansiona un pacchetto o scegli un tasto rapido.</div>`}
+   <h2 style=${{marginTop:20}}>Tasti rapidi</h2>
+   <div className="tiles">${tiles.map(p=>html`<button key=${p.id} className="tile" onClick=${()=>addId(p.id)}><b>${p.name}</b><br/><small className="mu">${eur(p.price)}</small></button>`)}
+   ${!tiles.length&&html`<span className="mu">Aggiungi prodotti dalla sezione Prodotti.</span>`}</div></div>
+  <div className="card"><h2>Totale da pagare</h2><div className="tot bump" key=${total}>${eur(total)}</div>
+   <div className="pay"><button className=${"b g"+(pay=="cash"?" on":"")} onClick=${()=>setPay("cash")}><${Ic} n="cash"/> Contanti <small>F1 conferma</small></button>
+   <button className=${"b g"+(pay=="pos"?" on":"")} onClick=${()=>setPay("pos")}><${Ic} n="card"/> POS <small>F2 conferma</small></button></div>
+   <div className="row"><button className="b ok" id="conf" onClick=${conf} disabled=${!rows.length}><${Ic} n="check" s=${24}/> Conferma vendita</button>
+   <button className="b g" onClick=${()=>setCart([])}>Svuota carrello</button><button className="b g" onClick=${undo}><${Ic} n="undo" s=${18}/> Annulla ultima vendita</button></div>
+   <p className="mu" style=${{fontSize:13}}>Invio a campo vuoto conferma con il metodo selezionato. F1 e F2 confermano subito in contanti o con il POS.</p>
+   <p className="mu" style=${{fontSize:13}}>${remoteOn?"📱 Secondo schermo collegato.":"📱 Secondo schermo non collegato (facoltativo): apri lo stesso link su tablet o telefono e aggiungi #cassa-remota alla fine."}</p>
+   <h2 style=${{marginTop:18}}>Ultime vendite</h2>
+   ${A.slice(-5).reverse().map(s=>html`<div key=${s.t} style=${{padding:"6px 0",borderTop:"1px solid #ffffff1f"}}><b>${s.t.slice(11,16)}</b> ${s.pay=="cash"?"Contanti":"POS"} · ${eur(s.total)}<br/><small className="mu">${s.lines.map(l=>l.q+"× "+l.n).join(", ")}</small></div>`)}
+   ${!A.length&&html`<span className="mu">Ancora nessuna vendita.</span>`}</div></div></section>`;
+
+ const Prod=()=>html`<section id="prod"><div className="card"><div className="row" style=${{marginBottom:12}}>
+  <input placeholder="Cerca prodotto, codice o categoria…" style=${{flex:1}} value=${q} onChange=${e=>setQ(e.target.value)}/>
+  <button className="b" onClick=${()=>setDlg({p:{}})}><${Ic} n="plus" s=${18}/> Nuovo prodotto</button>
+  <button className="b g" onClick=${backup}><${Ic} n="down" s=${18}/> Backup</button>
+  <label className="b g" style=${{cursor:"pointer",display:"inline-flex",alignItems:"center",gap:6,border:"1px solid var(--bd)",borderRadius:11,padding:"12px 18px",fontWeight:600}}><${Ic} n="up" s=${18}/> Ripristina<input type="file" accept=".json" hidden onChange=${restore}/></label></div>
+  <div className="sc"><table><thead><tr><th>Prodotto</th><th>Categoria</th><th className="r">Prezzo</th><th className="r">Costo</th><th className="r">Margine</th><th className="r">Soglia / minima</th><th className="r">Giacenza</th></tr></thead><tbody>
+  ${S.products.filter(p=>(p.name+p.barcode+p.cat).toLowerCase().includes(q.toLowerCase())).sort((a,b)=>a.cat.localeCompare(b.cat)||a.name.localeCompare(b.name)).map(p=>html`
+   <tr key=${p.id} className=${low(p)?"low":""} style=${{cursor:"pointer"}} onClick=${()=>setDlg({p})}><td><b>${p.name}</b><br/><small className="mu">${p.barcode}</small></td><td>${p.cat}</td>
+   <td className="r">${eur(p.price)}</td><td className="r">${eur(p.cost)}</td><td className="r">${eur(p.price-p.cost)}</td><td className="r">${p.min}</td><td className="r">${isSig(p)?html`<b>${p.stock}</b> pk · ${p.dep||0} st`:html`<b>${p.stock}</b>`}${low(p)&&" ⚠"}</td></tr>`)}
+  ${!S.products.length&&html`<tr><td colSpan="7" className="mu">Nessun prodotto. Scansiona un codice in Cassa oppure premi “Nuovo prodotto”.</td></tr>`}</tbody></table></div></div></section>`;
+
+ const dnames=["domenica","lunedì","martedì","mercoledì","giovedì","venerdì","sabato"],when=dl==0?"oggi":dl==1?"domani":"tra "+dl+" giorni";
+ const endTxt=new Date(Date.now()+H*864e5).toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"numeric"});
+ const trTxt=trT==null?"Servono almeno 14 giorni di vendite per stimare l’andamento.":trT>0.05?"Vendite in aumento: +"+Math.round(trT*100)+"% rispetto alla settimana scorsa.":trT<-0.05?"Vendite in calo: "+Math.round(trT*100)+"% rispetto alla settimana scorsa.":"Vendite stabili rispetto alla settimana scorsa.";
+ const ids=[...new Set([...sug.map(x=>x.p.id),...Object.keys(S.nd||{})])].filter(i=>pf(i)&&isSig(pf(i))),ntot=ids.reduce((x,i)=>x+num((S.nd||{})[i]),0);
+ const why=x=>{const L=["Vendi "+fmt(x.f)+" kg al giorno · hai "+fmt(x.av)+" kg"+(x.days!=null?", bastano "+fmt(x.days)+" giorni":"")];const lo=lastO(x.p.id);
+  if(lo){const since=lo.o.t.slice(0,10),sold=Object.entries(D[x.p.id]||{}).filter(([d])=>d>=since).reduce((t,[,v])=>t+v,0),nn=Math.max(1,Math.round((Date.now()-new Date(since))/864e5));
+   L.push("Dall’ultima nota ("+since.slice(8)+"/"+since.slice(5,7)+", "+fmt(lo.l.kg||lo.l.q*kgs(x.p))+" kg) hai venduto "+fmt(sold)+" kg in "+nn+(nn==1?" giorno":" giorni")+".")}return L};
+ const Ord=()=>html`<section id="ord">
+  <div className="card"><h2>Nota sigarette</h2>
+   <div className="row"><button className=${"b g"+(md=="r"?" sel":"")} onClick=${()=>setMode("r")}>Regolare</button><button className=${"b g"+(md=="s"?" sel":"")} onClick=${()=>setMode("s")}>Straordinaria</button>
+    <span className="mu" style=${{marginLeft:"auto"}}>Giorni da coprire <input type="number" style=${{width:70}} value=${N} onChange=${e=>{const ns=cl(S);ns.cfg={...cfg,[md=="r"?"cr":"cs"]:Math.max(1,+e.target.value||1)};persist(ns)}}/></span></div>
+   <div className="hero"><div><div className="mu">Da ordinare sul sito ADM</div><div className="big">${fmt(totKg)} kg</div><div className="mu">${totSt} stecche · ${sug.length} ${sug.length==1?"prodotto":"prodotti"}</div></div>
+    <div style=${{flex:1,minWidth:260}}><div style=${{fontWeight:700,fontSize:17}}>${trTxt}</div>
+     <div className="mu">Nota ${md=="r"?"regolare":"straordinaria"} ${when} (${dnames[(nowD+dl)%7]}). Con la merce in arrivo il giorno dopo, copre le vendite fino a ${endTxt}.${span<14?" Stima provvisoria: ho solo "+span+" giorni di vendite registrate.":""}</div></div></div></div>
+  <div className="card"><h2>Cosa ordinare</h2>
+   <div className="sc"><table className="nt"><colgroup><col style=${{width:"36%"}}/><col style=${{width:"12%"}}/><col style=${{width:"11%"}}/><col style=${{width:"12%"}}/><col style=${{width:"13%"}}/><col style=${{width:"16%"}}/></colgroup>
+    <thead><tr><th>Prodotto</th><th className="n">Andamento</th><th className="n">Hai (kg)</th><th className="n">Vendi al giorno (kg)</th><th className="n">Suggerito (kg)</th><th className="n">Ordinato su ADM (kg)</th></tr></thead><tbody>
+    ${ids.map(i=>{const p=pf(i),x=sug.find(y=>y.p.id==i);return html`<tr key=${i}><td><b>${p.name}</b>${x?why(x).map((t,k)=>html`<small key=${k} className="mu">${t}</small>`):html`<small className="mu">Aggiunto a mano.</small>`}</td>
+     <td className=${"n "+(x&&x.tr!=null&&Math.abs(x.tr)>=0.05?(x.tr>0?"up":"dn"):"mu")}>${x&&x.tr!=null?(Math.abs(x.tr)<0.05?"= stabile":(x.tr>0?"▲ +":"▼ ")+Math.round(x.tr*100)+"%"):"–"}</td>
+     <td className="n">${fmt(avail(p)*kgp(p))}</td><td className="n">${x?fmt(x.f):"–"}</td>
+     <td className="n">${x?html`<b style=${{fontSize:19}}>${fmt(x.kg)}</b><small className="mu">${x.st} ${x.st==1?"stecca":"stecche"}</small>`:"–"}</td>
+     <td className="n"><input className="kgin" inputMode="decimal" placeholder="0,0" value=${(S.nd||{})[i]??""} onChange=${e=>setNd(i,e.target.value)}/></td></tr>`})}
+    ${!ids.length&&html`<tr><td colSpan="6" className="mu">${span?"Niente da ordinare: le scorte coprono il periodo.":"Registra qualche giorno di vendite e qui comparirà cosa ordinare."}</td></tr>`}</tbody></table></div>
+   <div className="row" style=${{margin:"14px 0"}}>
+    <button className="b g" onClick=${()=>{const ns=cl(S);ns.nd=ns.nd||{};sug.forEach(x=>ns.nd[x.p.id]=x.kg.toFixed(1));persist(ns)}}>Compila con i suggeriti</button>
+    <select value=${osel} onChange=${e=>setOsel(e.target.value)}><option value="">Aggiungi un altro prodotto…</option>${S.products.filter(isSig).map(p=>html`<option key=${p.id} value=${p.id}>${p.name}</option>`)}</select>
+    <button className="b g" onClick=${()=>{if(osel){setNd(osel,"0.2");setOsel("")}}}>Aggiungi</button></div>
+   <div className="row" style=${{borderTop:"1px solid var(--bd)",paddingTop:14}}><b style=${{fontSize:18}}>Registra la nota inviata su ADM</b>
+    <input placeholder="Codice nota ADM" value=${code} onChange=${e=>setCode(e.target.value)} style=${{width:200}}/>
+    <span className="mu">Totale ordinato: <b>${fmt(ntot)} kg</b></span>
+    <button className="b ok" style=${{marginLeft:"auto"}} onClick=${regNota}><${Ic} n="check" s=${18}/> Registra nota</button></div></div>
+  <div className="card"><h2>Note registrate</h2>
+   ${S.orders.slice().reverse().slice(0,10).map(o=>html`<div key=${o.id||o.t} className="nrow"><b style=${{fontSize:17}}>${o.code||"senza codice"}</b>
+    <span className="mu">${o.t.slice(8,10)}/${o.t.slice(5,7)} · ${o.tipo=="s"?"straordinaria":"regolare"} · ${fmt(o.kg||0)} kg · ${eur(o.total)}</span><span className="pill">${o.status=="inviata"?"In arrivo":"Arrivata"}</span>
+    ${o.status=="inviata"&&html`<span className="row" style=${{marginLeft:"auto"}}><button className="b ok" onClick=${two("a"+o.id,()=>arrive(o.id))}>${armed=="a"+o.id?"Conferma: carica in deposito":"Segna come arrivata"}</button>
+     <button className="b g" onClick=${two("d"+o.id,()=>cancelO(o.id))}>${armed=="d"+o.id?"Conferma annullamento":"Annulla nota"}</button></span>`}</div>`)}
+   ${!S.orders.length&&html`<span className="mu">Nessuna nota registrata.</span>`}</div></section>`;
+ const days=[...Array(14)].map((_,i)=>lt(new Date(Date.now()-(13-i)*864e5)).slice(0,10)),ms=monthKeys(6).reverse(),tp={};
+ mon.forEach(s=>s.lines.forEach(l=>tp[l.n]=(tp[l.n]||0)+l.q));const top=Object.entries(tp).sort((a,b)=>b[1]-a[1]).slice(0,8);
+ const noLeg={plugins:{legend:{display:false}}};
+ const Stat=()=>html`<section id="stat"><div className="kpis">
+  ${[["Incasso oggi",eur(sum(day,s=>s.total))],["Vendite oggi",day.length],["Incasso del mese",eur(sum(mon,s=>s.total))],["Margine del mese",eur(sum(mon,s=>s.total-s.cost))],["Valore magazzino",eur(S.products.reduce((a,p)=>a+avail(p)*p.cost,0))]].map(([a,b])=>html`<div key=${a} className="kpi"><small>${a}</small><b>${b}</b></div>`)}</div>
+  <div className="grid2">
+  <div className="card"><h2>Incassi ultimi 14 giorni</h2><div className="ch"><${ChartBox} cfg=${{type:"bar",data:{labels:days.map(d=>d.slice(8)+"/"+d.slice(5,7)),datasets:[{label:"Incasso €",data:days.map(d=>sum(A.filter(s=>s.t.startsWith(d)),s=>s.total)),backgroundColor:"#0e8a8c",borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,...noLeg}}}/></div></div>
+  <div className="card"><h2>Metodi di pagamento (mese)</h2><div className="ch"><${ChartBox} cfg=${{type:"doughnut",data:{labels:["Contanti","POS"],datasets:[{data:["cash","pos"].map(p=>sum(mon.filter(s=>s.pay==p),s=>s.total)),backgroundColor:["#ffb703","#0e8a8c"],borderWidth:0}]}}}/></div></div>
+  <div className="card"><h2>Più venduti (mese)</h2><div className="ch"><${ChartBox} cfg=${{type:"bar",data:{labels:top.map(t=>t[0]),datasets:[{label:"Pezzi",data:top.map(t=>t[1]),backgroundColor:"#e07a5f",borderRadius:6}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,...noLeg}}}/></div></div>
+  <div className="card"><h2>Incassi e acquisti per mese</h2><div className="ch"><${ChartBox} cfg=${{type:"bar",data:{labels:ms,datasets:[{label:"Incassi",data:ms.map(k=>sum(A.filter(s=>s.t.startsWith(k)),s=>s.total)),backgroundColor:"#0e8a8c",borderRadius:6},{label:"Acquisti",data:ms.map(k=>sum(S.orders.filter(o=>o.t.startsWith(k)),o=>o.total)),backgroundColor:"#e07a5f",borderRadius:6}]}}}/></div></div></div>
+  <div className="card"><h2>Chiusura di cassa di oggi</h2><table><tbody><tr><td>Contanti</td><td className="r">${eur(cash)}</td></tr><tr><td>POS</td><td className="r">${eur(posT)}</td></tr><tr><td><b>Totale giornata</b> (${day.length} vendite)</td><td className="r"><b>${eur(cash+posT)}</b></td></tr></tbody></table>
+   <p>Contanti contati nel cassetto: <input type="number" step="0.01" style=${{width:130}} value=${cnt} onChange=${e=>setCnt(e.target.value)}/> <b>${cnt!==""&&(Math.abs(+cnt-cash)<.005?"Quadra":"Differenza: "+eur(+cnt-cash))}</b></p></div>
+  <div className="card"><h2>Prodotti fermi (nessuna vendita in 30 giorni)</h2><div className="mu">${S.products.filter(p=>p.stock>0&&!m30[p.id]).map(p=>p.name+" ("+p.stock+" pz)").join(" · ")||"Nessuno."}</div></div></section>`;
+
+ return html`<${React.Fragment}>
+  <header><div className="logo"><i>T</i><span>Tabaccheria</span></div>
+   ${[["cassa","receipt","Cassa"],["prod","package","Prodotti"],["ord","truck","Nota sigarette"],["stat","chart","Statistiche"]].map(([k,i,l])=>html`<button key=${k} className=${"tab"+(tab==k?" on":"")} onClick=${()=>setTab(k)}><${Ic} n=${i}/>${l}</button>`)}
+   <span id="st">${st}</span></header>
+  <main key=${tab}>${TEST&&html`<div className="testbar"><span>🧪 MODALITÀ TEST · ${new Date().toLocaleDateString("it-IT",{weekday:"long",day:"numeric",month:"long",year:"numeric"})}</span><button className="b g" onClick=${()=>setTdlg(true)}>Strumenti</button></div>`}${tab=="cassa"?Cassa():tab=="prod"?Prod():tab=="ord"?Ord():Stat()}</main>
+  ${dlg&&html`<${ProdDlg} key=${dlg.p.id||dlg.p.barcode||"new"} p=${dlg.p} onSave=${saveProd} onDel=${delProd} onClose=${()=>setDlg(null)}/>`}
+  ${tdlg&&html`<${TestDlg} T=${TT} onClose=${()=>setTdlg(false)}/>`}
+  <div id="toast" className=${toast?"s":""}>${toast}</div><//>`}
+function Root(){const[h,setH]=useState(location.hash);useEffect(()=>{const f=()=>setH(location.hash);addEventListener("hashchange",f);return()=>removeEventListener("hashchange",f)},[]);return h=="#cassa-remota"?html`<${Remote}/>`:html`<${App}/>`}
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${Root}/>`);
+</script></body></html>
